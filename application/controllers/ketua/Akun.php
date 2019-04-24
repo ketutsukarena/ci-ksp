@@ -5,6 +5,7 @@ class Akun extends CI_Controller{
 
   public function __construct()
   {
+    //tes perubahan
     parent::__construct();
     if (!isset($_SESSION['login'])) {
       redirect(site_url('auth/error'));
