@@ -19,6 +19,8 @@ class Nabung extends CI_Controller{
     $this->load->model('M_nasabah', 'nasabah');
     $this->load->model('M_trxnabung', 'nabung');
     $this->load->model('M_akun', 'akun');
+    $this->load->model('M_jurnal','jurnal');
+    
   }
 
   function index()
@@ -73,6 +75,33 @@ class Nabung extends CI_Controller{
         'kredit' => '0',
       );
       $result = $this->nabung->insert_kas($data_kas);
+
+      
+      // tambah jurnal
+      $no = $this->jurnal->getno() + 1;
+      $datajurnal = array(
+        'id_transaksi' => md5($now->format('dmYhis')), 
+        'no' => $no,
+        'tgl_transaksi' => $tgl,
+        'id_akun' => $idakun,
+        'debet' => '0',
+        'kredit' => $nom    
+      );
+      $this->jurnal->Insert($datajurnal);
+
+      $datajurnal = array(
+        'id_transaksi' => md5(($now->format('dmYhis'))+1), 
+        'no' => $no,
+        'tgl_transaksi' => $tgl,
+        'id_akun' => '100',
+        'debet' => $nom,
+        'kredit' => '0'    
+      );
+      $this->jurnal->Insert($datajurnal);
+      // akhir tambah jurnal
+
+
+
 
       $this->session->set_flashdata('success', 'Berhasil.!');
       redirect(site_url('bagtab/nabung'));
