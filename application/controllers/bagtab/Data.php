@@ -24,7 +24,6 @@ class Data extends CI_Controller{
   function index()
   {
     $data['vTab'] = $this->data->SelectAll()->result();
-
     $data['content'] = 'trxtabungan/view';
     $this->load->view('index',$data);
   }

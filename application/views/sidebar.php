@@ -92,6 +92,7 @@
           </ul>
         </li>
         <li class="<?php echo activate_menu('data');?>"><a href="<?php echo base_url('bagtab/data');?>"><i class="fa fa-users"></i> <span>Data Tabungan</span></a></li>
+        <li class="<?php echo activate_menu('data');?>"><a href="<?php echo base_url('bagtab/jurnal');?>"><i class="fa fa-users"></i> <span>Jurnal</span></a></li>
       </ul>
     <?php } elseif ($status=="Bagian Kredit") { ?>
       <ul class="sidebar-menu" data-widget="tree">
