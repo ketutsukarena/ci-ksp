@@ -78,27 +78,22 @@ class Nabung extends CI_Controller{
 
       
       // tambah jurnal
-      $no = $this->jurnal->getno() + 1;
       $datajurnal = array(
-        'id_transaksi' => md5($now->format('dmYhis')), 
-        'no' => $no,
         'tgl_transaksi' => $tgl,
-        'id_akun' => $idakun,
-        'debet' => '0',
-        'kredit' => $nom    
+        'keterangan' => 'menabung '.$id,
       );
       $this->jurnal->Insert($datajurnal);
 
-      $datajurnal = array(
-        'id_transaksi' => md5(($now->format('dmYhis'))+1), 
-        'no' => $no,
-        'tgl_transaksi' => $tgl,
-        'id_akun' => '100',
-        'debet' => $nom,
-        'kredit' => '0'    
-      );
-      $this->jurnal->Insert($datajurnal);
-      // akhir tambah jurnal
+      // $datajurnal = array(
+      //   'id_transaksi' => md5(($now->format('dmYhis'))+1), 
+      //   'no' => $no,
+      //   'tgl_transaksi' => $tgl,
+      //   'id_akun' => '100',
+      //   'debet' => $nom,
+      //   'kredit' => '0'    
+      // );
+      // $this->jurnal->Insert($datajurnal);
+      // // akhir tambah jurnal
 
 
 

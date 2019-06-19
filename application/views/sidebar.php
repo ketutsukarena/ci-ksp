@@ -41,6 +41,22 @@
         </ul>
       </li>
       <li class="<?php echo activate_menu('kas');?>"><a href="<?php echo site_url('ketua/kas');?>"><i class="fa fa-database"></i> <span>Data Kas</span></a></li>
+        <li class="<?php echo activate_menu('data');?>"><a href="<?php echo base_url('ketua/jurnal');?>"><i class="fa fa-users"></i> <span>Jurnal</span></a></li>
+      <li class="<?php echo activate_menu('kas');?>"><a href="<?php echo site_url('ketua/tutupbuku');?>"><i class="fa fa-book"></i> <span>Tutup Buku</span></a></li>
+      <li class="<?php echo activate_menu('biaya'); echo activate_menu('pendapatan'); echo activate_menu('simpanan'); echo activate_menu('akun'); echo activate_menu('bungatabungan');?> treeview">
+        <a href="#">
+          <i class="fa fa-book"></i> <span>Laporan Keuangan</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="<?php echo activate_menu('bukubesar');?>"><a href="<?php echo site_url('ketua/bukubesar');?>"><i class="fa fa-circle-o"></i> <span>Buku Besar</span></a></li>
+          <li class="<?php echo activate_menu('neracasaldo');?>"><a href="<?php echo base_url('ketua/neracasaldo');?>"><i class="fa fa-circle-o"></i>Neraca Saldo </a></li>
+          <li class="<?php echo activate_menu('neraca');?>"><a href="<?php echo base_url('ketua/neraca');?>"><i class="fa fa-circle-o"></i>Neraca</a></li>
+          <li class="<?php echo activate_menu('labarugi');?>"><a href="<?php echo base_url('ketua/labarugi');?>"><i class="fa fa-circle-o"></i>Laba-Rugi</a></li>
+        </ul>
+      </li>
     </ul>
 
   <?php } elseif ($status=="Admin") { ?>
@@ -92,7 +108,6 @@
           </ul>
         </li>
         <li class="<?php echo activate_menu('data');?>"><a href="<?php echo base_url('bagtab/data');?>"><i class="fa fa-users"></i> <span>Data Tabungan</span></a></li>
-        <li class="<?php echo activate_menu('data');?>"><a href="<?php echo base_url('bagtab/jurnal');?>"><i class="fa fa-users"></i> <span>Jurnal</span></a></li>
       </ul>
     <?php } elseif ($status=="Bagian Kredit") { ?>
       <ul class="sidebar-menu" data-widget="tree">
