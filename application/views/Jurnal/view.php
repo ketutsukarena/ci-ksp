@@ -50,33 +50,33 @@
          <tr>
            <th>No</th>
            <th>Tgl Transaksi</th>
+           <th>Keterangan</th>
            <th>Akun</th>
            <th>Debet</th>
            <th>Kredit</th>
+           <th>user</th>
          </tr>
          </thead>
          <tbody>
            <?php
            foreach ($jurnal as $n) {?>
            <tr>
-             <td><?php echo $n->no; ?></td>
+             <td><?php echo $n->id_jurnal_detail; ?></td>
              <td><?php echo $n->tgl_transaksi; ?></td>
-             <td>
-                <?php
-                  echo $n->nama_akun;
-                ?>
-             </td>
+             <td><?php echo $n->keterangan; ?></td>
+             <td><?php echo $n->nama_akun; ?></td>
              <td><?php echo $n->debet; ?></td>
              <td><?php echo $n->kredit; ?></td>
+             <td><?php echo $n->username; ?></td>
            </tr>
-           <?php } ?>\
+           <?php } ?>
            
          </tbody>
          <tfoot>
             <tr>
-             <td align="right" colspan="3"><b>Total</b></td>
+             <td align="right" colspan="4"><b>Total</b></td>
              <td><b><?php echo $totaldebet; ?></b></td>
-             <td><b><?php echo $totalkredit; ?></b></td>
+             <td colspan="2"><b><?php echo $totalkredit; ?></b></td>
            </tr>
          </tfoot>
        </table>

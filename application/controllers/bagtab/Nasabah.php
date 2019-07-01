@@ -111,7 +111,7 @@ class Nasabah extends CI_Controller{
         $thn = $now->format('Y');
         $kd = $this->input->post('kd_user');
         $norek = $kd."/".$thn;
-        $hasil = $this->rek->cekrek($id);
+        $hasil = $this->rek->cekrek($id)->row_array();
         if (isset($hasil)) {
           redirect(site_url('bagtab/nasabah'));
         }else {

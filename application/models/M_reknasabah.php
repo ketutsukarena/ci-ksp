@@ -40,7 +40,7 @@ class M_reknasabah extends CI_Model{
     $this->db->select('*')
     ->from('tb_reknasabah')
     ->where('id_nasabah', $id);
-    return $this->db->get()->row_array();
+    return $this->db->get();
   }
   public function insert($datarek)
   {

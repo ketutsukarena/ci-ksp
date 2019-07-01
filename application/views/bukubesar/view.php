@@ -32,6 +32,7 @@
         <table id="export2excel" class="table table-bordered table-hover dataTable">
           <thead>
           <tr>
+            <th style="text-align:center;">No</th>
             <th style="text-align:center;">Tgl Transaksi</th>
             <th style="text-align:center;">Keterangan</th>
             <th>Ref.</th>
@@ -43,20 +44,21 @@
             <?php
               $this->load->model('M_jurnal', 'jurnal');
               $jurnal = $this->jurnal->selectbyakun($a->id_akun)->result();
-              foreach ($jurnal as $i) {
-            ?>
+              $no = 1;
+              foreach ($jurnal as $i) { ?>
             <tr>
+              <th style="text-align:center;"><?php echo $no ?></th>
               <td style="text-align:center;"><?php echo date("d M Y", strtotime($i->tgl_transaksi)) ?></td>
-              <td><?php echo "Keterangan belum isi"; ?></td>
+              <td><?php echo $i->keterangan ?></td>
               <td><?php echo "Referensi" ?></td>
               <td><?php echo $i->debet; ?></td>
               <td><?php echo $i->kredit; ?></td>
             </tr>
-            <?php } ?>
+            <?php $no = $no+1; } ?>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="3" style="text-align:right;">total : </td>
+              <td colspan="4" style="text-align:right;">total : </td>
               <td>
                 <?php 
                   echo $this->jurnal->totaldebetbyakun($a->id_akun);                  
@@ -69,10 +71,10 @@
                 </td>
             </tr>
             <tr>
-              <td colspan="3" style="text-align:right;">Saldo : </td>
+              <td colspan="4" style="text-align:right;">Saldo : </td>
               <td colspan="2">
                 <?php 
-                  echo $this->jurnal->totaldebetbyakun($a->id_akun) - $this->jurnal->totalkreditbyakun($a->id_akun); 
+                  echo $this->jurnal->totaldebetbyakun($a->id_akun) - $this->jurnal->totalkreditbyakun($a->id_akun);
                 ?>
               </td>
             </tr>

@@ -69,6 +69,15 @@ class M_nasabah extends CI_Model{
     return $this->db->get();
   }
 
+  public function SelectByIdRek($id)
+  {
+    $this->db->select('n.*, rn.*, CONCAT(rn.id_reknasabah,'.',"/",'.',rn.no_rek) AS reknasabah')
+    ->from('tb_nasabah as n')
+    ->join('tb_reknasabah as rn','n.id_nasabah=rn.id_nasabah')
+    ->where('rn.id_reknasabah', $id);
+    return $this->db->get();
+  }
+
   public function update($id, $data)
   {
     $this->db->where('id_nasabah', $id)
