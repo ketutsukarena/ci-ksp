@@ -16,16 +16,25 @@ class Laporankeuangan extends CI_Controller {
         }if ($this->session->login['level']=="Bagian Kredit") {
         redirect(site_url('bagkre/kdashboard'));
         }
-        $this->load->model('M_dashboard', 'dash');  
         $this->load->model('M_Akun', 'akun');
         $this->load->model('M_jurnal', 'jurnal');
+        $this->load->model('M_tutupbuku', 'tutupbuku');
     }
 
     function index()
     {
+        if ($this->input->post('idtutupbuku') == NULL){
+            $idtb = $this->tutupbuku->getidmax();
+        }else{
+            $idtb = $this->input->post('idtutupbuku');
+        }
+        $where = array('id_tutup_buku' => $idtb);
+
         $data['akun'] = $this->akun->SelectAll()->result();
-        $data['jurnal'] = $this->jurnal->select()->result();
-        $data['content'] = 'laporankeuangan/view';
+        $data['jurnal'] = $this->jurnal->selectwhere($where)->result();
+        $data['tutupbuku'] = $this->tutupbuku->select()->result();
+        $data['idtutupbuku'] = $idtb;
+        $data['content'] = 'laporankeuangan/sementara';
 		$this->load->view('index',$data);
      }
         

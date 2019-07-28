@@ -77,6 +77,7 @@
                       <input class="form-control" placeholder="Masukkan nama jenis simpanan" id="Rr" name="jenis" type="hidden">
                       <input class="form-control rp" placeholder="Masukkan nominal biaya simpanan" name="biaya" type="text" >
                     </div>
+                    
                   </div>
                 </div>
               </div>

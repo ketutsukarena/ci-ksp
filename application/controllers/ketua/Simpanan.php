@@ -30,7 +30,7 @@ class Simpanan extends CI_Controller{
 
   public function tambah()
   {
-    $this->form_validation->set_rules('jenis','Jenis','required');
+    $this->form_validation->set_rules('kd','Jenis','required');
     $this->form_validation->set_rules('biaya','Nominal','required');
 
     if ($this->form_validation->run() == FALSE)
@@ -46,7 +46,7 @@ class Simpanan extends CI_Controller{
       }else {
         $data = array(
           'id_akun' => $id_akun,
-          'nama_simpanan' => $this->input->post('jenis'),
+          'nama_simpanan' => $this->akun->SelectById($id_akun)['nama_akun'],
           'nominal' => str_replace(',', '',$this->input->post('biaya')),
         );
         $result = $this->simpan->insert($data);

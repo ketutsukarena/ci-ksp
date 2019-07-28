@@ -17,6 +17,9 @@ class Trxpendapatan extends CI_Controller{
     }
     $this->load->model('M_pendapatan', 'pen');
     $this->load->model('M_trxpendapatan', 'trx');
+    $this->load->model('M_link_akun', 'linkakun');
+    $this->load->model('M_jurnal','jurnal');
+    
   }
 
   function index()
@@ -32,6 +35,8 @@ class Trxpendapatan extends CI_Controller{
   {
     $now = new DateTime('Asia/Kuala_Lumpur');
     $tgl = $now->format('Y-m-d');
+    $ket = $this->input->post('ket');
+    $nom = str_replace(',', '',$this->input->post('pendapatan'));
 
     $this->form_validation->set_rules('ket','Keterangan','required');
 
@@ -42,8 +47,8 @@ class Trxpendapatan extends CI_Controller{
     }else{
      $data = array(
        'id_pendapatan' => $this->input->post('id'),
-       'nominal' => str_replace(',', '',$this->input->post('pendapatan')),
-       'keterangan' => $this->input->post('ket'),
+       'nominal' => $nom,
+       'keterangan' => $ket,
        'tgl_transaksi' => $tgl,
      );
      $id_trx = $this->trx->insert($data);
@@ -53,10 +58,21 @@ class Trxpendapatan extends CI_Controller{
        'status' => 'TRX-Pendapatan',
        'tgl_transaksi' => $tgl,
        'id_akun' => $this->input->post('id_akun'),
-       'debet' => str_replace(',', '',$this->input->post('pendapatan')),
+       'debet' => $nom,
        'kredit' => '0',
      );
      $result = $this->trx->insert_kas($kas);
+
+     // tambah jurnal
+
+      $idjurnal= $this->jurnal->getidmax() + 1;
+      $keterangan = $ket;
+      $id_jenis_transaksi = "8";
+      $nominal = $nom;
+      
+      include_once("tambah_jurnal.php");
+      //tambah jurnal
+
      $this->session->set_flashdata('success', 'Berhasil.!');
      redirect(site_url('admin/trxpendapatan'));
     }

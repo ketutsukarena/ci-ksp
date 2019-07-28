@@ -89,6 +89,16 @@
               </div>
             </div>
             <div class="form-row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label class="col-md-2 col-sm-3 control-label">Foto</label>
+                    <div class="col-md-4 col-sm-9">
+                      <input type="file" id="input-file-now" class="dropify" name="img" />
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
               <div class="col-md-offset-2 col-sm-10">
                 <div class="form-group">
                   <div class="col-sm-10">

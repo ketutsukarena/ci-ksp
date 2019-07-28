@@ -17,6 +17,15 @@ class M_akun extends CI_Model{
     return $this->db->get();
   }
 
+  public function Selectwhere($where)
+  {
+    $this->db->select('*')
+    ->from('tb_akun')
+    ->where($where)
+    ->order_by('id_akun', 'ASC');
+    return $this->db->get();
+  }
+
   public function cekakun($id)
   {
     $this->db->select('id_akun')

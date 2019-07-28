@@ -11,6 +11,11 @@ class M_tutupbuku extends CI_Model {
         //Do your magic here
     }
 
+    public function select(){
+        $this->db->order_by('id_tutup_buku', 'desc');
+        return $this->db->get('tb_tutup_buku');
+    }
+
     public function insert($data){
         $this->db->insert('tb_tutup_buku', $data);
     }
@@ -36,7 +41,7 @@ class M_tutupbuku extends CI_Model {
         $this->db->where('id_tutup_buku', $id_tutup_buku);
         $this->db->order_by('tgl_transaksi', 'asc');
         $this->db->limit(1);         
-        return $this->db->get()->row()->tgl_transaksi;
+        return $this->db->get();
         
         
         //     $query = $this->db->query("SELECT tgl_transaksi FROM tb_jurnal WHERE id_tutup_buku = ".$id_tutup_buku." ORDER BY ");
@@ -49,7 +54,7 @@ class M_tutupbuku extends CI_Model {
         $this->db->where('id_tutup_buku', $id_tutup_buku);
         $this->db->order_by('tgl_transaksi', 'desc');
         $this->db->limit(1);
-        return $this->db->get()->row()->tgl_transaksi;
+        return $this->db->get();
     }
 }
                         

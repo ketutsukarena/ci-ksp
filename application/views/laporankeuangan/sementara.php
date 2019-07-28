@@ -1,41 +1,40 @@
-
-
-
-
 <section class="content-header">
-  <h1>Tutup Buku
+  <h1>Laporan Keuangan
     <small></small>
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> Beranda</a></li>
-    <li class="active">Tutup Buku</li>
+    <li class="active">Laporan Keuangan</li>
   </ol>
 </section>
 
 <section class="content">
 <div class="row">
   <div class="col-md-12">
-    <?php if($this->session->flashdata('berhasil')){?>
-      <div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-        <strong><?php echo $this->session->flashdata('berhasil');?></strong> Tutup Buku Berhasil.
-      </div>
-    <?php } if($this->session->flashdata('gagal')){?>
-      <div class="alert alert-danger">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-        <strong><?php echo $this->session->flashdata('gagal');?></strong> Tutup Buku Sudah dilakukan!
-      </div>
-    <?php }?>
-  </div>
-  <div class="col-md-12">
     <div class="nav-tabs-custom">
       <ul class="nav nav-tabs">
-        <li class="pull-left header"><i class="fa fa-th"></i> </li>
+        <li class="pull-left header">
+          <form action="<?php base_url('ketua/laporankeuangan'); ?>" method="post">
+          <select name="idtutupbuku">
+              <?php
+                foreach ($tutupbuku as $a) {
+                 echo "<option";
+                 if ($a->id_tutup_buku == $idtutupbuku){
+                   echo " selected=selected";
+                 }
+                 echo " value=".$a->id_tutup_buku."> Periode : ".$a->tgl_awal." s/d ".$a->tgl_akhir."</option>";
+                }
+                ?>
+          </select>
+          <li>
+          <button class="btn btn-primary" type="submit" name="Submit">Pilih</button>
+          </li>
+         </form>
+        </li>
         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Buku Besar</a></li>
         <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Neraca Saldo</a></li>
         <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Laba Rugi</a></li>
         <li><a href="#tab_4" data-toggle="tab">Neraca</a></li>
-        <li><a href="<?php echo base_url('ketua/tutupbuku/tutupbuku');?>" type="button" class="btn header">Tutup buku</a></li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane active" id="tab_1">
@@ -70,7 +69,7 @@
                 <tbody>
                   <?php
                     $this->load->model('M_jurnal', 'jurnal');
-                    $where = array( 'id_tutup_buku' => '0',
+                    $where = array( 'id_tutup_buku' => $idtutupbuku,
                                     'tb_jurnal_detail.id_akun' => $a->id_akun);
                     $jurnal = $this->jurnal->selectwhere($where)->result();
                     $no = 1;
@@ -103,7 +102,11 @@
                     <td colspan="4" style="text-align:right;">Saldo : </td>
                     <td colspan="2">
                       <?php 
-                        echo $this->jurnal->totaldebetwhere($where) - $this->jurnal->totalkreditwhere($where)
+                      if ($a->bertambah == 'd'){
+                        echo $this->jurnal->totaldebetwhere($where) - $this->jurnal->totalkreditwhere($where);
+                      }else{
+                        echo $this->jurnal->totalkreditwhere($where) - $this->jurnal->totaldebetwhere($where);
+                      }
                       ?>
                     </td>
                   </tr>
@@ -133,8 +136,9 @@
                   <tr>
                     <th style="text-align:center;">Kode Akun</th>
                     <th style="text-align:center;">Nama Akun</th>
+                    <th style="text-align:center;">Debet</th>
                     <th style="text-align:center;">Kredit</th>
-                    <th style="text-align:center;">Kredit</th>
+                    <th style="text-align:center;">Saldo</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -143,7 +147,7 @@
                     $totaldebet = 0;
                     $totalkredit = 0;
                     foreach ($akun as $i) {
-                    $where = array( 'id_tutup_buku' => '0',
+                    $where = array( 'id_tutup_buku' => $idtutupbuku,
                                     'tb_jurnal_detail.id_akun' => $i->id_akun);
                       $debet = $this->jurnal->totaldebetwhere($where);
                       $kredit = $this->jurnal->totalkreditwhere($where);
@@ -153,6 +157,14 @@
                     <td style="text-align:center;"><?php echo $i->nama_akun ?></td>
                     <td><?php echo $debet ?></td>
                     <td><?php echo $kredit ?></td>
+                    <td><?php
+                      if ($i->bertambah == 'd'){
+                        echo $debet-$kredit;
+                      }else{
+                        echo $kredit-$debet;
+                      }
+                      ?>
+                    </td>
                   </tr>
                   <?php 
                     $totaldebet = $totaldebet + $debet;
@@ -160,21 +172,6 @@
                     } 
                   ?>
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <td colspan="2" style="text-align:right;">Saldo : </td>
-                    <td>
-                      <?php 
-                        echo $totaldebet;                  
-                      ?>
-                    </td>
-                    <td>
-                      <?php 
-                        echo $totalkredit;                  
-                      ?>
-                      </td>
-                  </tr>
-                </tfoot>
               </table>
             </div>
           </div>
@@ -208,7 +205,7 @@
                     $laba = 0;
                     foreach ($akun as $i) {
                       if(substr($i->id_akun,0,1) == 4 || substr($i->id_akun,0,1) == 5 ){
-                        $where = array( 'id_tutup_buku' => '0',
+                        $where = array( 'id_tutup_buku' => $idtutupbuku,
                                         'tb_jurnal_detail.id_akun' => $i->id_akun);
                           $debet = $this->jurnal->totaldebetwhere($where);
                           $kredit = $this->jurnal->totalkreditwhere($where);
@@ -279,7 +276,7 @@
                     $this->load->model('M_jurnal', 'jurnal');
                     foreach ($akun as $i) {
                       if(substr($i->id_akun,0,1) == 1 || substr($i->id_akun,0,1) == 2 || substr($i->id_akun,0,1) == 3 ){
-                        $where = array( 'id_tutup_buku' => '0',
+                        $where = array( 'id_tutup_buku' => $idtutupbuku,
                                         'tb_jurnal_detail.id_akun' => $i->id_akun);
                           $debet = $this->jurnal->totaldebetwhere($where);
                           $kredit = $this->jurnal->totalkreditwhere($where);
@@ -315,7 +312,6 @@
             </div>
           </div>
         </div>
-        <!-- /.tab-pane -->
         <!-- /.tab-pane -->
       </div>
       <!-- /.tab-content -->

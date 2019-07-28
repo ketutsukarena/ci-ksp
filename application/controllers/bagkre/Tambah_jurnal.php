@@ -2,6 +2,7 @@
 - deklarasi load model jurnal
 - deklarasi load model linkakun
 - variabel idjurnal
+- variabel id_jenis_transaksi
 - variabel keterangan
 - variabel bukti
 - variabel nominal -->

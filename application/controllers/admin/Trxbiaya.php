@@ -17,6 +17,9 @@ class Trxbiaya extends CI_Controller{
     }
     $this->load->model('M_biaya', 'biaya');
     $this->load->model('M_trxbiaya', 'trx');
+    $this->load->model('M_link_akun', 'linkakun');
+    $this->load->model('M_jurnal','jurnal');
+    
   }
 
   function index()
@@ -32,6 +35,8 @@ class Trxbiaya extends CI_Controller{
   {
     $now = new DateTime('Asia/Kuala_Lumpur');
     $tgl = $now->format('Y-m-d');
+    $ket = $this->input->post('ket');
+    $nom = str_replace(',', '',$this->input->post('biaya'));
 
     $this->form_validation->set_rules('ket','Keterangan','required');
 
@@ -42,8 +47,8 @@ class Trxbiaya extends CI_Controller{
     }else{
      $data = array(
        'id_biaya' => $this->input->post('id'),
-       'nominal' => str_replace(',', '',$this->input->post('biaya')),
-       'keterangan' => $this->input->post('ket'),
+       'nominal' => $nom,
+       'keterangan' => $ket,
        'tgl_transaksi' => $tgl,
      );
      $id_trx = $this->trx->insert($data);
@@ -54,9 +59,53 @@ class Trxbiaya extends CI_Controller{
        'tgl_transaksi' => $tgl,
        'id_akun' => $this->input->post('id_akun'),
        'debet' => '0',
-       'kredit' => str_replace(',', '',$this->input->post('biaya')),
+       'kredit' => $nom,
      );
      $result = $this->trx->insert_kas($kas);
+
+      
+      // tambah jurnal
+
+      $idjurnal= $this->jurnal->getidmax() + 1;
+
+      // gambar bukti
+        $img = $_FILES['img']['name'];
+        $config['upload_path']='./img/bukti';
+        $config['allowed_types']='jpg|png|jpeg';
+        $config['file_name'] = $idjurnal;
+        $config['overwrite'] = TRUE;
+        $config['file_ext_tolower'] = TRUE;
+        $config['remove_space'] = TRUE;
+        $this->load->library('upload',$config);
+        $this->upload->do_upload('img');
+
+        $images = $this->upload->data();
+
+        $config['img_library'] = 'gd2';
+        $config['source_image'] = './img/bukti'.$images['file_name'];
+        $config['create_thumb'] = FALSE;
+        $config['maintain_ratio'] = FALSE;
+        $config['quality'] = '100%';
+        $config['width'] = 512;
+        $config['height'] = 512;
+        $config['new_image'] = './img/'.$images['file_name'];
+        $this->load->library('image_lib',$config);
+        $this->image_lib->resize();
+        $this->image_lib->clear();
+
+        if (!$this->image_lib->resize()) {
+            echo $this->image_lib->display_errors();
+        }
+        // gambar bukti
+
+      $keterangan = $ket;
+      $id_jenis_transaksi = "7";
+      $nominal = $nom;
+      $bukti = $this->upload->data('file_name');
+      
+      include_once("tambah_jurnal.php");
+      //tambah jurnal
+
      $this->session->set_flashdata('success', 'Berhasil.!');
      redirect(site_url('admin/trxbiaya'));
     }

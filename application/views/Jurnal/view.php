@@ -31,7 +31,23 @@
        <h3 class="box-title">View Data Jurnal</h3>
        <div class="row">
          <div class="col-md-2">
-           <!-- kosong -->
+         <form action="<?php base_url('ketua/jurnal'); ?>" method="post">
+          <select name="idtutupbuku">
+              <option value="0">Jurnal sekarangan</option>
+              <?php
+                foreach ($tutupbuku as $a) {
+                 echo "<option";
+                 if ($a->id_tutup_buku == $idtutupbuku){
+                   echo " selected=selected";
+                 }
+                 echo " value=".$a->id_tutup_buku."> Periode : ".$a->tgl_awal." s/d ".$a->tgl_akhir."</option>";
+                }
+                ?>
+          </select>
+          <div class="box-footer">
+          <button class="btn btn-primary" type="submit" name="Submit">Pilih</button>
+          </div>
+         </form>
          </div>
          <div class="col-md-offset-8 col-md-2">
            <label>Cetak Report</label>

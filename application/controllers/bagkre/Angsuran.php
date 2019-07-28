@@ -9,6 +9,8 @@ class Angsuran extends CI_Controller{
     $this->load->model('M_pinjaman', 'pinjam');
     $this->load->model('M_akun', 'akun');
     $this->load->model('M_trxangsuran', 'angsuran');
+    $this->load->model('M_link_akun', 'linkakun');
+    $this->load->model('M_jurnal','jurnal');
   }
 
   function index()
@@ -83,6 +85,15 @@ class Angsuran extends CI_Controller{
         'kredit' => '0',
       );
       $id_trx = $this->angsuran->insert_kas($data_kas);
+
+      // tambah jurnal
+      $idjurnal= $this->jurnal->getidmax() + 1;
+      $keterangan = "Angsuran";
+      $id_jenis_transaksi = "2";
+      $nominal = $total_angsuran;
+      include("tambah_jurnal.php");
+      //tambah jurnal
+
       $this->session->set_flashdata('success', 'Berhasil.!');
       redirect(site_url().'bagkre/v_angsuran/detail/'.$id);
     }

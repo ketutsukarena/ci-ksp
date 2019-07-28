@@ -18,32 +18,41 @@ class Tutupbuku extends CI_Controller {
       redirect(site_url('bagkre/kdashboard'));
     }
     $this->load->model('M_tutupbuku', 'tutupbuku');
+        $this->load->model('M_Akun', 'akun');
+        $this->load->model('M_jurnal', 'jurnal');
   }
 
 
   public function index(){
+    $data['akun'] = $this->akun->SelectAll()->result();
+    $data['jurnal'] = $this->jurnal->select()->result();
     $data['content'] = 'tutupbuku/view';
     $this->load->view('index',$data);
   }
 
   public function tutupbuku(){
     $id_tutup_buku = $this->tutupbuku->getidmax() + 1;
-    $tglawal = $this->tutupbuku->gettglawal(0);
-    $tglakhir = $this->tutupbuku->gettglakhir(0);
-
-    // print_r($tglawal);
-    
-    $data_tutup = array(  'id_tutup_buku' => $id_tutup_buku, 
-                          'tgl_awal'      => $tglawal,
-                          'tgl_akhir'     => $tglakhir
+    if($this->tutupbuku->gettglawal(0)->num_rows() > 0){
+      $tglawal = $this->tutupbuku->gettglawal(0)->row()->tgl_transaksi;
+      $tglakhir = $this->tutupbuku->gettglakhir(0)->row()->tgl_transaksi;
+      
+      // print_r($tglawal);
+      
+      $data_tutup = array(  'id_tutup_buku' => $id_tutup_buku, 
+      'tgl_awal'      => $tglawal,
+      'tgl_akhir'     => $tglakhir
     );
     $this->tutupbuku->insert($data_tutup);
-
+    
     $data = array('id_tutup_buku' => $id_tutup_buku);
     $this->tutupbuku->updatejurnal('NULL',$data);
+    $this->session->set_flashdata('berhasil', 'Sukses.!');
     redirect(site_url('ketua/tutupbuku'));
-    
 
+    }else{
+      $this->session->set_flashdata('gagal', 'Gagal.!');
+      redirect(site_url('ketua/tutupbuku'));
+    }
   }
         
 }
