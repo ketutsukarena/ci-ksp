@@ -34,7 +34,7 @@ class Laporankeuangan extends CI_Controller {
         $data['jurnal'] = $this->jurnal->selectwhere($where)->result();
         $data['tutupbuku'] = $this->tutupbuku->select()->result();
         $data['idtutupbuku'] = $idtb;
-        $data['content'] = 'laporankeuangan/sementara';
+        $data['content'] = 'laporankeuangan/view';
 		$this->load->view('index',$data);
      }
         

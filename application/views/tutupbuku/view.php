@@ -41,15 +41,7 @@
         <div class="tab-pane active" id="tab_1">
           <div class="box-status">
             <div class="row">
-              <div class="col-md-2">
-              </div>
-              <div class="col-md-offset-8 col-md-2">
-                <label>Cetak Report</label>
-                <div class="box-footer">
-                  <a href="<?php echo base_url('report/crda') ?>" type="button" class="btn btn-primary" target="_blank"><i class="fa fa-print"> .pdf</i></a>
-                  <a href="#" type="button" class="btn btn-primary"><i class="fa fa-print"> .xls</i></a>
-                </div>
-              </div>
+              <h1>Buku Besar</h1>
             </div>
           </div>
           <?php foreach ($akun as $a) {?>
@@ -117,13 +109,7 @@
         <div class="tab-pane" id="tab_2">
           <div class="box-status">
             <div class="row">
-              <div class="col-md-offset-10 col-md-2">
-                <label>Cetak Report</label>
-                <div class="box-footer">
-                  <a href="<?php echo base_url('report/crda') ?>" type="button" class="btn btn-primary" target="_blank"><i class="fa fa-print"> .pdf</i></a>
-                  <a href="#" type="button" class="btn btn-primary"><i class="fa fa-print"> .xls</i></a>
-                </div>
-              </div>
+              <h1>Neraca Saldo</h1>
             </div>
           </div>
           <div class="box-body">
@@ -183,13 +169,7 @@
         <div class="tab-pane" id="tab_3">
           <div class="box-status">
             <div class="row">
-              <div class="col-md-offset-10 col-md-2">
-                <label>Cetak Report</label>
-                <div class="box-footer">
-                  <a href="<?php echo base_url('report/crda') ?>" type="button" class="btn btn-primary" target="_blank"><i class="fa fa-print"> .pdf</i></a>
-                  <a href="#" type="button" class="btn btn-primary"><i class="fa fa-print"> .xls</i></a>
-                </div>
-              </div>
+              <h1>Laba Rugi</h1>
             </div>
           </div>
           <div class="box-body">
@@ -255,13 +235,7 @@
         <div class="tab-pane" id="tab_4">
           <div class="box-status">
             <div class="row">
-              <div class="col-md-offset-10 col-md-2">
-                <label>Cetak Report</label>
-                <div class="box-footer">
-                  <a href="<?php echo base_url('report/crda') ?>" type="button" class="btn btn-primary" target="_blank"><i class="fa fa-print"> .pdf</i></a>
-                  <a href="#" type="button" class="btn btn-primary"><i class="fa fa-print"> .xls</i></a>
-                </div>
-              </div>
+              <h1>Neraca</h1>
             </div>
           </div>
           <div class="box-body">

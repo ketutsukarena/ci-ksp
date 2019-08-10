@@ -52,8 +52,7 @@
          <div class="col-md-offset-8 col-md-2">
            <label>Cetak Report</label>
            <div class="box-footer">
-             <a href="<?php echo base_url('report/crtn') ?>" type="button" class="btn btn-primary" target="_blank"><i class="fa fa-print"> .pdf</i></a>
-             <a href="#" type="button" class="btn btn-primary"><i class="fa fa-print"> .xls</i></a>
+             <a href="<?php echo base_url('report/cetakjurnal/'.$idtutupbuku) ?>" type="button" class="btn btn-primary" target="_blank"><i class="fa fa-print"> cetak pdf</i></a>
            </div>
          </div>
        </div>
@@ -75,9 +74,10 @@
          </thead>
          <tbody>
            <?php
+           $no=1;
            foreach ($jurnal as $n) {?>
            <tr>
-             <td><?php echo $n->id_jurnal_detail; ?></td>
+             <td><?php echo $no++; ?></td>
              <td><?php echo $n->tgl_transaksi; ?></td>
              <td><?php echo $n->keterangan; ?></td>
              <td><?php echo $n->nama_akun; ?></td>

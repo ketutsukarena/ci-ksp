@@ -13,6 +13,9 @@ class Report extends CI_Controller{
     $this->load->model('M_trxsimpan', 'trx');
     $this->load->model('M_datatabungan', 'data');
     $this->load->model('M_trxsimpan_det', 'trx_det');
+    $this->load->model('M_jurnal','jurnal');
+    $this->load->model('M_tutupbuku','tutupbuku');
+    $this->load->model('M_akun','akun');
   }
 
   function index()
@@ -589,4 +592,346 @@ class Report extends CI_Controller{
 
     $pdf->Output();
   }
+  public function cetakjurnal($idtutupbuku){ // Cetak Rekap Tabungan Nasabah
+    
+    $pdf = new FPDF('L','mm','A4');
+    $pdf->AddPage();
+    //header
+    $pdf->Image('assets/img/logo-kop.png', 30,10,22,22);
+    //$pdf->Image('assets/img/logo-kop.png', 240,10,22,22);
+    $pdf->SetFont('Times','B', 14);
+    $pdf->Cell(0,7,'KOPERASI SIMPAN PINJAM WINANGUN KERTHI',0,1,'C');
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,6,'BADAN HUKUM NO. : 15 / BH / DISKOP.PKM / 2006',0,1,'C');
+    $pdf->SetFont('Times','B', 11);
+    $pdf->Cell(0,5,'Jl. Ahmad Yani No. 379 Kelurahan Peguyangan Kecamatan Denpasar Utara Kota Denpasar, Bali - 80239',0,1,'C');
+    $pdf->Cell(0,5,'Telp. (0361) 421626 email: koperasi_winangunkerthi@gmail.com ',0,1,'C');
+    $pdf->SetLineWidth(1);
+    $pdf->Line(10,34,288,34);
+    $pdf->SetLineWidth(0);
+    $pdf->Line(10,35,288,35);
+    $pdf->Cell(10,10,'',0,1);
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,1,'REPORT',0,1,'C');
+    $a = $this->tutupbuku->selectwhere($idtutupbuku)->row();
+    $pdf->Cell(0,10,'REKAP DATA JURNAL PERIODE '.date("d/m/Y", strtotime($a->tgl_awal)).' - '.date("d/m/Y", strtotime($a->tgl_akhir)),0,1,'C');
+
+    $pdf->Cell(10,4,'',0,1);
+    $pdf->SetFont('Times','B',10);
+    $pdf->Cell(10,6,'No',1,0,'C');
+    $pdf->Cell(30,6,'Tgl Transaksi',1,0,'C');
+    $pdf->Cell(115,6,'Keterangan',1,0,'C');
+    $pdf->Cell(35,6,'Akun',1,0,'C');
+    $pdf->Cell(25,6,'Debet',1,0,'C');
+    $pdf->Cell(27,6,'Kredit',1,0,'C');
+    $pdf->Cell(35,6,'User',1,1,'C');
+    
+    $pdf->SetFont('Times','',10);
+    $where = array('id_tutup_buku' => $idtutupbuku );
+    $q = $this->jurnal->Selectwhere($where)->result();
+    $no = 1;
+    foreach ($q as $row){
+       $pdf->Cell(10,6,$no++.'.',1,0,'C');
+       $pdf->Cell(30,6,date("d M Y", strtotime($row->tgl_transaksi)),1,0);
+       $pdf->Cell(115,6,$row->keterangan,1,0);
+       $pdf->Cell(35,6,$row->nama_akun,1,0);
+       $pdf->Cell(25,6,$row->debet,1,0);
+       $pdf->Cell(27,6,$row->kredit,1,0);
+       $pdf->Cell(35,6,$row->username,1,1);
+      //  $pdf->Cell(35,6,number_format($row->saldo_akhir,2,'.',','),1,1,'R');
+     }
+
+    //  $p = $this->db->select('SUM(saldo_akhir) AS sakhir')
+    //  ->from('tb_reknasabah')
+    //  ->get()->row();
+     $pdf->SetFont('Times','B',10);
+     $pdf->Cell(190,6,'Total',1,0,'C');
+     $pdf->Cell(25,6,$this->jurnal->totaldebetwhere($where),1,0);
+     $pdf->Cell(27,6,$this->jurnal->totalkreditwhere($where),1,0);
+     $pdf->Cell(35,6,'',1,1);
+    //  $pdf->Cell(27,6,number_format($p->sakhir,2,'.',','),1,1,'R');
+
+    $pdf->Output();
+  }
+
+   public function cetakbukubesar($idtutupbuku){ // Cetak Rekap Tabungan Nasabah
+    
+    $pdf = new FPDF('p','mm','A4');
+    $pdf->AddPage();
+    //header
+    $pdf->Image('assets/img/logo-kop.png', 14,10,20,19);
+    $pdf->SetFont('Times','B', 14);
+    $pdf->Cell(0,7,'KOPERASI SIMPAN PINJAM WINANGUN KERTHI',0,1,'C');
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,6,'BADAN HUKUM NO. : 15 / BH / DISKOP.PKM / 2006',0,1,'C');
+    $pdf->SetFont('Times','B', 11);
+    $pdf->Cell(0,5,'Jl. A. Yani No. 379 Peguyangan, Denpasar Utara - Kota Denpasar, Bali 80239',0,1,'C');
+    $pdf->Cell(0,5,'Telp. (0361) 421626',0,1,'C');
+    $pdf->SetLineWidth(1);
+    $pdf->Line(10,34,200,34);
+    $pdf->SetLineWidth(0);
+    $pdf->Line(10,35,200,35);
+    $pdf->Cell(0,5,'',0,1);
+
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,1,'REPORT',0,1,'C');
+    $a = $this->tutupbuku->selectwhere($idtutupbuku)->row();
+    $pdf->Cell(0,10,'REKAP DATA BUKU BESAR PERIODE '.date("d/m/Y", strtotime($a->tgl_awal)).' - '.date("d/m/Y", strtotime($a->tgl_akhir)),0,1,'C');
+
+    $akun = $this->akun->akun->SelectAll()->result();
+    foreach ($akun as $a) {
+      $pdf->Cell(0,10,'Buku Besar '.$a->nama_akun,0,1,'C');
+
+      $pdf->Cell(10,4,'',0,1);
+      $pdf->SetFont('Times','B',10);
+      $pdf->Cell(10,6,'No',1,0,'C');
+      $pdf->Cell(25,6,'Tgl Transaksi',1,0,'C');
+      $pdf->Cell(90,6,'Keterangan',1,0,'C');
+      $pdf->Cell(15,6,'Ref.',1,0,'C');
+      $pdf->Cell(25,6,'Debet',1,0,'C');
+      $pdf->Cell(25,6,'Kredit',1,1,'C');
+      // $pdf->Cell(35,6,'User',1,1,'C');
+      
+      $pdf->SetFont('Times','',10);
+      $where = array( 'id_tutup_buku' => $idtutupbuku,
+                      'tb_jurnal_detail.id_akun' => $a->id_akun);
+      $q = $this->jurnal->selectwhere($where)->result();
+      $no = 1;
+      foreach ($q as $row){
+        $pdf->Cell(10,6,$no++.'.',1,0,'C');
+        $pdf->Cell(25,6,date("d M Y", strtotime($row->tgl_transaksi)),1,0);
+        $pdf->Cell(90,6,$row->keterangan,1,0);
+        $pdf->Cell(15,6,'Jurnal '.$idtutupbuku,1,0);
+        $pdf->Cell(25,6,$row->debet,1,0);
+        $pdf->Cell(25,6,$row->kredit,1,1);
+        // $pdf->Cell(35,6,$row->username,1,1);
+        //  $pdf->Cell(35,6,number_format($row->saldo_akhir,2,'.',','),1,1,'R');
+      }
+
+      //  $p = $this->db->select('SUM(saldo_akhir) AS sakhir')
+      //  ->from('tb_reknasabah')
+      //  ->get()->row();
+      $pdf->SetFont('Times','B',10);
+      $pdf->Cell(140,6,'Total',1,0,'C');
+      $pdf->Cell(25,6,$this->jurnal->totaldebetwhere($where),1,0);
+      $pdf->Cell(25,6,$this->jurnal->totalkreditwhere($where),1,1);
+      // $pdf->Cell(35,6,'',1,1);
+      //  $pdf->Cell(27,6,number_format($p->sakhir,2,'.',','),1,1,'R');
+
+    }
+    $pdf->Output();
+  }
+   public function cetakneracasaldo($idtutupbuku){ // Cetak Rekap Tabungan Nasabah
+    
+    $pdf = new FPDF('L','mm','A4');
+    $pdf->AddPage();
+    //header
+    $pdf->Image('assets/img/logo-kop.png', 30,10,22,22);
+    //$pdf->Image('assets/img/logo-kop.png', 240,10,22,22);
+    $pdf->SetFont('Times','B', 14);
+    $pdf->Cell(0,7,'KOPERASI SIMPAN PINJAM WINANGUN KERTHI',0,1,'C');
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,6,'BADAN HUKUM NO. : 15 / BH / DISKOP.PKM / 2006',0,1,'C');
+    $pdf->SetFont('Times','B', 11);
+    $pdf->Cell(0,5,'Jl. Ahmad Yani No. 379 Kelurahan Peguyangan Kecamatan Denpasar Utara Kota Denpasar, Bali - 80239',0,1,'C');
+    $pdf->Cell(0,5,'Telp. (0361) 421626 email: koperasi_winangunkerthi@gmail.com ',0,1,'C');
+    $pdf->SetLineWidth(1);
+    $pdf->Line(10,34,288,34);
+    $pdf->SetLineWidth(0);
+    $pdf->Line(10,35,288,35);
+    $pdf->Cell(10,10,'',0,1);
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,1,'REPORT',0,1,'C');
+    $a = $this->tutupbuku->selectwhere($idtutupbuku)->row();
+    $pdf->Cell(0,10,'REKAP DATA JURNAL PERIODE '.date("d/m/Y", strtotime($a->tgl_awal)).' - '.date("d/m/Y", strtotime($a->tgl_akhir)),0,1,'C');
+
+    $pdf->Cell(10,4,'',0,1);
+    $pdf->SetFont('Times','B',10);
+    $pdf->Cell(25,6,'Kode Akun',1,0,'C');
+    $pdf->Cell(45,6,'Nama Akun',1,0,'C');
+    $pdf->Cell(25,6,'Debet',1,0,'C');
+    $pdf->Cell(25,6,'Kredit',1,0,'C');
+    $pdf->Cell(25,6,'Saldo',1,1,'C');
+    
+    $pdf->SetFont('Times','',10);
+    $akun = $this->akun->SelectAll()->result();
+    foreach ($akun as $i){
+      $where = array( 'id_tutup_buku' => $idtutupbuku,
+                      'tb_jurnal_detail.id_akun' => $i->id_akun);
+      $kredit = $this->jurnal->totalkreditwhere($where);
+      $debet = $this->jurnal->totaldebetwhere($where);
+       $pdf->Cell(25,6,$i->id_akun,1,0,'C');
+       $pdf->Cell(45,6,$i->nama_akun,1,0);
+       $pdf->Cell(25,6,$debet,1,0);
+       $pdf->Cell(25,6,$kredit,1,0);
+       if ($i->bertambah == 'd'){
+          $saldo = $debet-$kredit;
+        }else{
+          $saldo = $kredit-$debet;
+        }
+       $pdf->Cell(25,6,$saldo,1,1);
+      //  $pdf->Cell(27,6,$row->kredit,1,1);
+      //  $pdf->Cell(35,6,number_format($row->saldo_akhir,2,'.',','),1,1,'R');
+     }
+
+    //  $p = $this->db->select('SUM(saldo_akhir) AS sakhir')
+    //  ->from('tb_reknasabah')
+    //  ->get()->row();
+    //  $pdf->SetFont('Times','B',10);
+    //  $pdf->Cell(190,6,'Total',1,0,'C');
+    //  $pdf->Cell(25,6,$this->jurnal->totaldebetwhere($where),1,0);
+    //  $pdf->Cell(27,6,$this->jurnal->totalkreditwhere($where),1,0);
+    //  $pdf->Cell(35,6,'',1,1);
+    //  $pdf->Cell(27,6,number_format($p->sakhir,2,'.',','),1,1,'R');
+
+    $pdf->Output();
+  }
+   public function cetaklabarugi($idtutupbuku){ // Cetak Rekap Tabungan Nasabah
+    
+    $pdf = new FPDF('L','mm','A4');
+    $pdf->AddPage();
+    //header
+    $pdf->Image('assets/img/logo-kop.png', 30,10,22,22);
+    //$pdf->Image('assets/img/logo-kop.png', 240,10,22,22);
+    $pdf->SetFont('Times','B', 14);
+    $pdf->Cell(0,7,'KOPERASI SIMPAN PINJAM WINANGUN KERTHI',0,1,'C');
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,6,'BADAN HUKUM NO. : 15 / BH / DISKOP.PKM / 2006',0,1,'C');
+    $pdf->SetFont('Times','B', 11);
+    $pdf->Cell(0,5,'Jl. Ahmad Yani No. 379 Kelurahan Peguyangan Kecamatan Denpasar Utara Kota Denpasar, Bali - 80239',0,1,'C');
+    $pdf->Cell(0,5,'Telp. (0361) 421626 email: koperasi_winangunkerthi@gmail.com ',0,1,'C');
+    $pdf->SetLineWidth(1);
+    $pdf->Line(10,34,288,34);
+    $pdf->SetLineWidth(0);
+    $pdf->Line(10,35,288,35);
+    $pdf->Cell(10,10,'',0,1);
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,1,'REPORT',0,1,'C');
+    $a = $this->tutupbuku->selectwhere($idtutupbuku)->row();
+    $pdf->Cell(0,10,'REKAP DATA JURNAL PERIODE '.date("d/m/Y", strtotime($a->tgl_awal)).' - '.date("d/m/Y", strtotime($a->tgl_akhir)),0,1,'C');
+
+    $pdf->Cell(10,4,'',0,1);
+    $pdf->SetFont('Times','B',10);
+    $pdf->Cell(25,6,'Kode Akun',1,0,'C');
+    $pdf->Cell(45,6,'Nama Akun',1,0,'C');
+    $pdf->Cell(25,6,'Saldo',1,1,'C');
+    
+    $pdf->SetFont('Times','',10);
+    $akun = $this->akun->SelectAll()->result();
+    $laba=0;
+    foreach ($akun as $i){
+      if(substr($i->id_akun,0,1) == 4 || substr($i->id_akun,0,1) == 5 ){
+        $where = array( 'id_tutup_buku' => $idtutupbuku,
+                        'tb_jurnal_detail.id_akun' => $i->id_akun);
+        $debet = $this->jurnal->totaldebetwhere($where);
+        $kredit = $this->jurnal->totalkreditwhere($where);
+        $pdf->Cell(25,6,$i->id_akun,1,0,'C');
+        $pdf->Cell(45,6,$i->nama_akun,1,0,'C');
+        if ($i->bertambah == 'd'){
+          $saldo = $debet-$kredit;
+        }else{
+          $saldo = $kredit-$debet;
+        }
+        $pdf->Cell(25,6,$saldo,1,1,'C');
+        //  $pdf->Cell(35,6,number_format($row->saldo_akhir,2,'.',','),1,1,'R');
+        if ($i->bertambah == 'd'){
+          $laba = $laba-$saldo;
+        }else{
+          $laba = $laba+$saldo;
+        }
+      }
+    }
+
+    //  $p = $this->db->select('SUM(saldo_akhir) AS sakhir')
+    //  ->from('tb_reknasabah')
+    //  ->get()->row();
+    $pdf->SetFont('Times','B',10);
+    $pdf->Cell(70,6,'Laba Rugi Berjalan',1,0,'R');
+    $pdf->Cell(25,6,$laba,1,1);
+    //  $pdf->Cell(27,6,number_format($p->sakhir,2,'.',','),1,1,'R');
+  
+    $pdf->Output();
+  }
+   
+   public function cetakneraca($idtutupbuku){ // Cetak Rekap Tabungan Nasabah
+    
+    $pdf = new FPDF('L','mm','A4');
+    $pdf->AddPage();
+    //header
+    $pdf->Image('assets/img/logo-kop.png', 30,10,22,22);
+    //$pdf->Image('assets/img/logo-kop.png', 240,10,22,22);
+    $pdf->SetFont('Times','B', 14);
+    $pdf->Cell(0,7,'KOPERASI SIMPAN PINJAM WINANGUN KERTHI',0,1,'C');
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,6,'BADAN HUKUM NO. : 15 / BH / DISKOP.PKM / 2006',0,1,'C');
+    $pdf->SetFont('Times','B', 11);
+    $pdf->Cell(0,5,'Jl. Ahmad Yani No. 379 Kelurahan Peguyangan Kecamatan Denpasar Utara Kota Denpasar, Bali - 80239',0,1,'C');
+    $pdf->Cell(0,5,'Telp. (0361) 421626 email: koperasi_winangunkerthi@gmail.com ',0,1,'C');
+    $pdf->SetLineWidth(1);
+    $pdf->Line(10,34,288,34);
+    $pdf->SetLineWidth(0);
+    $pdf->Line(10,35,288,35);
+    $pdf->Cell(10,10,'',0,1);
+    $pdf->SetFont('Times','B', 12);
+    $pdf->Cell(0,1,'REPORT',0,1,'C');
+    $a = $this->tutupbuku->selectwhere($idtutupbuku)->row();
+    $pdf->Cell(0,10,'REKAP DATA JURNAL PERIODE '.date("d/m/Y", strtotime($a->tgl_awal)).' - '.date("d/m/Y", strtotime($a->tgl_akhir)),0,1,'C');
+
+    $pdf->Cell(10,4,'',0,1);
+    $pdf->SetFont('Times','B',10);
+    $pdf->Cell(25,6,'Kode Akun',1,0,'C');
+    $pdf->Cell(45,6,'Nama Akun',1,0,'C');
+    $pdf->Cell(25,6,'Saldo',1,1,'C');
+    
+    $pdf->SetFont('Times','',10);
+    $akun = $this->akun->SelectAll()->result();
+
+    foreach ($akun as $i){
+      if(substr($i->id_akun,0,1) == 1 || substr($i->id_akun,0,1) == 2 || substr($i->id_akun,0,1) == 3 ){
+        $where = array( 'id_tutup_buku' => $idtutupbuku,
+                        'tb_jurnal_detail.id_akun' => $i->id_akun);
+        $debet = $this->jurnal->totaldebetwhere($where);
+        $kredit = $this->jurnal->totalkreditwhere($where);
+        $pdf->Cell(25,6,$i->id_akun,1,0,'C');
+        $pdf->Cell(45,6,$i->nama_akun,1,0,'C');
+        if ($i->bertambah == 'd'){
+          $saldo = $debet-$kredit;
+        }else{
+          $saldo = $kredit-$debet;
+        }
+        $pdf->Cell(25,6,$saldo,1,1,'C');
+        //  $pdf->Cell(35,6,number_format($row->saldo_akhir,2,'.',','),1,1,'R');
+      }
+    }
+    $laba = 0;
+    foreach ($akun as $i) {
+      if(substr($i->id_akun,0,1) == 4 || substr($i->id_akun,0,1) == 5 ){
+        $where = array( 'id_tutup_buku' => $idtutupbuku,
+                        'tb_jurnal_detail.id_akun' => $i->id_akun);
+        $debet = $this->jurnal->totaldebetwhere($where);
+        $kredit = $this->jurnal->totalkreditwhere($where);
+          if ($i->bertambah == 'd'){
+          $saldo = $debet-$kredit;
+        }else{
+          $saldo = $kredit-$debet;
+        }
+        if ($i->bertambah == 'd'){
+        $laba = $laba-$saldo;
+        }else{
+          $laba = $laba+$saldo;
+        }
+      }
+    }
+
+    //  $p = $this->db->select('SUM(saldo_akhir) AS sakhir')
+    //  ->from('tb_reknasabah')
+    //  ->get()->row();
+    $pdf->SetFont('Times','B',10);
+    $pdf->Cell(70,6,'Laba Rugi Berjalan',1,0,'R');
+    $pdf->Cell(25,6,$laba,1,1);
+    //  $pdf->Cell(27,6,number_format($p->sakhir,2,'.',','),1,1,'R');
+  
+    $pdf->Output();
+  }
+   
 }

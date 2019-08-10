@@ -32,18 +32,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       return $this->db->get();
     }
 
-    public function selectbyakun($id_akun){
-      $this->db->select('tb_jurnal_detail.*,tb_jurnal.*,tb_akun.*');
-      $this->db->from('tb_jurnal_detail');
-      $this->db->join('tb_jurnal', 'tb_jurnal_detail.id_jurnal = tb_jurnal.id_jurnal', 'left');
-      $this->db->join('tb_akun', 'tb_jurnal_detail.id_akun = tb_akun.id_akun', 'left');
-      $this->db->where('tb_jurnal_detail.id_akun', $id_akun);   
-      $this->db->order_by('id_jurnal_detail', 'asc');
-      return $this->db->get();
-
-    }
-
-
     public function Insert($data)
     {
       $this->db->insert('tb_jurnal', $data);
@@ -77,6 +65,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       
       $this->db->insert('tb_jurnal_detail', $data);
       
+    }
+    Public function Inserttmpjurnal($data){
+      $this->db->insert('tb_tmpjurnal', $data);
+    }
+    public function selecttmpjurnal(){
+      
+      $this->db->select('tb_tmpjurnal.*, tb_akun.*');
+      $this->db->from('tb_tmpjurnal');
+      $this->db->join('tb_akun', 'tb_tmpjurnal.id_akun = tb_akun.id_akun', 'left');
+      return $this->db->get();
+    }
+    public function deletetmpjurnal($id){
+      $this->db->where('id', $id);
+      $this->db->delete('tb_tmpjurnal');
+    }
+    public function deletetmpjurnalall(){
+      $this->db->empty_table('tb_tmpjurnal');
     }
   }
 

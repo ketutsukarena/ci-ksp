@@ -15,6 +15,10 @@ class M_tutupbuku extends CI_Model {
         $this->db->order_by('id_tutup_buku', 'desc');
         return $this->db->get('tb_tutup_buku');
     }
+    public function selectwhere($id){
+        $this->db->where('id_tutup_buku = '.$id);
+        return $this->db->get('tb_tutup_buku');
+    }
 
     public function insert($data){
         $this->db->insert('tb_tutup_buku', $data);

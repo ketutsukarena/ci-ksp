@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2019 at 02:46 AM
--- Server version: 10.1.28-MariaDB
+-- Generation Time: 04 Agu 2019 pada 19.30
+-- Versi Server: 10.1.28-MariaDB
 -- PHP Version: 7.1.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -25,36 +25,62 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_akun`
+-- Struktur dari tabel `jenis_transaksi`
+--
+
+CREATE TABLE `jenis_transaksi` (
+  `id_jenis_transasksi` int(11) NOT NULL,
+  `nama_transaksi` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `jenis_transaksi`
+--
+
+INSERT INTO `jenis_transaksi` (`id_jenis_transasksi`, `nama_transaksi`) VALUES
+(1, 'Kredit'),
+(2, 'Angsuran Kredit'),
+(3, 'Menabung'),
+(4, 'Tarik Tabungan'),
+(5, 'Simpanan Pokok'),
+(6, 'Simpanan wajib'),
+(7, 'Biaya'),
+(8, 'Pendapatan');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tb_akun`
 --
 
 CREATE TABLE `tb_akun` (
   `id_akun` int(3) NOT NULL,
   `nama_akun` varchar(50) NOT NULL,
-  `transaksi_kas` enum('debet','kredit') DEFAULT NULL
+  `bertambah` enum('d','k') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_akun`
+-- Dumping data untuk tabel `tb_akun`
 --
 
-INSERT INTO `tb_akun` (`id_akun`, `nama_akun`, `transaksi_kas`) VALUES
-(100, 'Kas', ''),
-(101, 'Simpanan Pokok', 'debet'),
-(102, 'Simpanan Wajib', 'debet'),
-(201, 'Setoran Tabungan', 'debet'),
-(202, 'Penarikan Tabungan', 'kredit'),
-(203, 'Bunga Tabungan', 'debet'),
-(204, 'Koreksi Saldo Tabungan', 'debet'),
-(301, 'Pinjaman Kredit', 'kredit'),
-(302, 'Angsuran Kredit', 'debet'),
-(401, 'Pendapatan', 'debet'),
-(501, 'Biaya', 'kredit');
+INSERT INTO `tb_akun` (`id_akun`, `nama_akun`, `bertambah`) VALUES
+(100, 'Kas', 'd'),
+(101, 'Simpanan Pokok', 'k'),
+(102, 'Simpanan Wajib', 'k'),
+(201, 'Setoran Tabungan', 'k'),
+(202, 'Penarikan Tabungan', 'd'),
+(203, 'Bunga Tabungan', 'd'),
+(204, 'Koreksi Saldo Tabungan', 'k'),
+(206, 'Hutang', 'k'),
+(301, 'Pinjaman Kredit', 'd'),
+(302, 'Angsuran Kredit', 'k'),
+(401, 'Pendapatan', 'k'),
+(501, 'Biaya', 'd');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_biaya`
+-- Struktur dari tabel `tb_biaya`
 --
 
 CREATE TABLE `tb_biaya` (
@@ -65,7 +91,7 @@ CREATE TABLE `tb_biaya` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_biaya`
+-- Dumping data untuk tabel `tb_biaya`
 --
 
 INSERT INTO `tb_biaya` (`id_biaya`, `kode_biaya`, `id_akun`, `nama`) VALUES
@@ -76,7 +102,7 @@ INSERT INTO `tb_biaya` (`id_biaya`, `kode_biaya`, `id_akun`, `nama`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_buku_besar`
+-- Struktur dari tabel `tb_buku_besar`
 --
 
 CREATE TABLE `tb_buku_besar` (
@@ -93,7 +119,7 @@ CREATE TABLE `tb_buku_besar` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_bungatabungan`
+-- Struktur dari tabel `tb_bungatabungan`
 --
 
 CREATE TABLE `tb_bungatabungan` (
@@ -103,7 +129,7 @@ CREATE TABLE `tb_bungatabungan` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_bungatabungan`
+-- Dumping data untuk tabel `tb_bungatabungan`
 --
 
 INSERT INTO `tb_bungatabungan` (`id_bunga`, `id_akun`, `nominal`) VALUES
@@ -112,7 +138,7 @@ INSERT INTO `tb_bungatabungan` (`id_bunga`, `id_akun`, `nominal`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_jns_simpanan`
+-- Struktur dari tabel `tb_jns_simpanan`
 --
 
 CREATE TABLE `tb_jns_simpanan` (
@@ -123,54 +149,127 @@ CREATE TABLE `tb_jns_simpanan` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_jns_simpanan`
+-- Dumping data untuk tabel `tb_jns_simpanan`
 --
 
 INSERT INTO `tb_jns_simpanan` (`id_simpanan`, `id_akun`, `nama_simpanan`, `nominal`) VALUES
-(1, 101, 'Simpanan Pokok', 1000000),
-(2, 102, 'Simpanan Wajib', 10000);
+(11, 101, 'Simpanan Pokok', 1000000),
+(2, 102, 'Simpanan Wajib', 10000),
+(12, 100, 'Kas', 2000000);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_jurnal`
+-- Struktur dari tabel `tb_jurnal`
 --
 
 CREATE TABLE `tb_jurnal` (
-  `id_transaksi` varchar(32) NOT NULL,
-  `no` varchar(32) NOT NULL,
+  `id_jurnal` int(11) NOT NULL,
   `tgl_transaksi` date NOT NULL,
-  `id_akun` varchar(5) NOT NULL,
+  `keterangan` varchar(150) NOT NULL,
+  `bukti` varchar(100) DEFAULT NULL,
+  `id_user` int(11) NOT NULL,
+  `id_tutup_buku` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `tb_jurnal`
+--
+
+INSERT INTO `tb_jurnal` (`id_jurnal`, `tgl_transaksi`, `keterangan`, `bukti`, `id_user`, `id_tutup_buku`) VALUES
+(1, '2019-06-20', 'menabung - 4', NULL, 0, 1),
+(2, '2019-06-20', 'menabung - 4', NULL, 13, 1),
+(3, '2019-06-23', 'menabung - 5', NULL, 13, 1),
+(4, '2019-06-23', 'menabung - 7/AD/2018', NULL, 13, 1),
+(5, '2019-06-23', 'menabung (19/YO/2018 - I Made Su', NULL, 13, 1),
+(6, '2019-06-23', 'menabung (21/MP/2018 - Sang Ayu ', NULL, 13, 1),
+(7, '2019-06-23', 'menabung (21/MP/2018 - Sang Ayu ', NULL, 13, 1),
+(8, '2019-06-23', 'menabung (21/MP/2018 - Sang Ayu Komang Juni Setiari)', NULL, 13, 1),
+(9, '2019-06-23', 'menabung (14/YO/2018 - Ni Luh Putu Lestariningsih)', NULL, 13, 1),
+(10, '2019-06-23', 'menabung (28/YO/2019 - ketut bagus)', NULL, 13, 1),
+(11, '2019-06-24', 'menabung (27/MP/2018 - I Made Sucipta Yasa)', NULL, 13, 1),
+(12, '2019-06-30', 'menabung (27/MP/2018 - I Made Sucipta Yasa)', NULL, 13, 2),
+(13, '2019-06-30', 'menabung (27/MP/2018 - I Made Sucipta Yasa)', NULL, 13, 2),
+(14, '2019-06-30', 'menabung (1/AD/2018 - Putu Dian Apriliantari)', NULL, 13, 2),
+(15, '2019-06-30', 'menabung (4/AD/2018 - Fakhri Nurulhuda)', NULL, 13, 2),
+(16, '2019-07-18', 'menabung (28/YO/2019 - ketut bagus)', '', 13, 2),
+(17, '2019-07-18', 'testes', '17.png', 2, 2),
+(18, '2019-07-19', 'Kredit  - Putu Dian Apriliantari', NULL, 4, 2),
+(19, '2019-07-19', 'Biaya admin dan materai - Kredit  - Putu Dian Apriliantari', NULL, 4, 2),
+(20, '2019-07-20', 'Angsuran', NULL, 4, 2),
+(21, '2019-07-20', 'Angsuran', NULL, 4, 2),
+(22, '2019-07-27', 'menabung (4/AD/2018 - Fakhri Nurulhuda)', '', 13, 3),
+(23, '2019-07-27', 'menabung (2/AD/2018 - I Putu Erik Pertamayasa)', '', 13, 4),
+(24, '2019-08-04', 'menabung (2/AD/2018 - I Putu Erik Pertamayasa)', '', 13, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tb_jurnal_detail`
+--
+
+CREATE TABLE `tb_jurnal_detail` (
+  `id_jurnal_detail` int(11) NOT NULL,
+  `id_jurnal` int(11) NOT NULL,
+  `id_akun` int(3) NOT NULL,
   `debet` int(11) NOT NULL,
   `kredit` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_jurnal`
+-- Dumping data untuk tabel `tb_jurnal_detail`
 --
 
-INSERT INTO `tb_jurnal` (`id_transaksi`, `no`, `tgl_transaksi`, `id_akun`, `debet`, `kredit`) VALUES
-('10a8fe70e3a51fe70bb067354e5e2a29', '6', '2019-06-05', '201', 0, 3000),
-('19e61c84a6d9e5d94f416c6c1f51a2dd', '3', '2019-06-04', '201', 0, 10000),
-('22bf4208eace6fcf5d3f0bbe8c46a52e', '3', '2019-06-04', '100', 10000, 0),
-('3dcb5d70376109bd9b51e00f4dddcf8b', '4', '2019-06-04', '201', 0, 3000),
-('4d637c020e9e981bab5133f12d8d58df', '2', '2019-06-04', '100', 3000, 0),
-('500074a22199944c9641f7647a24702a', '7', '2019-06-05', '100', 29000, 0),
-('63b623634ec3c7935a1f50906e026917', '7', '2019-06-05', '201', 0, 29000),
-('6fdea6ea12a93ef8c61e6eae356a469f', '5', '2019-06-04', '202', 100000, 0),
-('8aa050fb863cd135e2f71278d60690da', '2', '2019-06-04', '201', 0, 3000),
-('8bc28c6e229169bcc7c8fa2f6c388c52', '5', '2019-06-04', '100', 0, 100000),
-('8fe8ea2445cbd0d73e7ccdc839f686de', '8', '2019-06-05', '201', 0, 5000),
-('9f49d2f293ba5711ca9058ca6d8bbf4b', '8', '2019-06-05', '100', 5000, 0),
-('b03afea2563c159bad038feed9d494d7', '4', '2019-06-04', '100', 3000, 0),
-('c4ca4238a0b923820dcc509a6f75849b', '1', '2019-06-04', '100', 10000, 0),
-('d235dfad1e732c345c8dec169a8cb312', '6', '2019-06-05', '100', 3000, 0),
-('f6af7a6ce9acef9916bb84923f2b8ccf', '1', '2019-06-04', '201', 0, 10000);
+INSERT INTO `tb_jurnal_detail` (`id_jurnal_detail`, `id_jurnal`, `id_akun`, `debet`, `kredit`) VALUES
+(1, 1, 100, 3000, 0),
+(2, 1, 206, 0, 3000),
+(3, 2, 100, 10000, 0),
+(4, 2, 206, 0, 10000),
+(5, 3, 100, 10000, 0),
+(6, 3, 206, 0, 10000),
+(7, 4, 100, 10000, 0),
+(8, 4, 206, 0, 10000),
+(9, 5, 100, 3000, 0),
+(10, 5, 206, 0, 3000),
+(11, 6, 100, 1000, 0),
+(12, 6, 206, 0, 1000),
+(13, 7, 100, 1000, 0),
+(14, 7, 206, 0, 1000),
+(15, 8, 100, 30000, 0),
+(16, 8, 206, 0, 30000),
+(17, 9, 100, 1000, 0),
+(18, 9, 206, 0, 1000),
+(19, 10, 100, 3000, 0),
+(20, 10, 206, 0, 3000),
+(21, 11, 100, 3000, 0),
+(22, 11, 206, 0, 3000),
+(23, 13, 100, 1000, 0),
+(24, 13, 206, 0, 1000),
+(25, 14, 100, 5000, 0),
+(26, 14, 206, 0, 5000),
+(27, 15, 100, 10000, 0),
+(28, 15, 206, 0, 10000),
+(29, 16, 100, 2000, 0),
+(30, 16, 206, 0, 2000),
+(33, 17, 501, 1000000, 0),
+(34, 17, 100, 0, 1000000),
+(63, 18, 301, 100000000, 0),
+(64, 18, 100, 0, 100000000),
+(65, 19, 100, 56000, 0),
+(66, 19, 401, 0, 56000),
+(67, 21, 100, 2550000, 0),
+(68, 21, 302, 0, 2550000),
+(69, 22, 100, 29000, 0),
+(70, 22, 206, 0, 29000),
+(71, 23, 100, 1000, 0),
+(72, 23, 206, 0, 1000),
+(73, 24, 100, 2000, 0),
+(74, 24, 206, 0, 2000);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_kas`
+-- Struktur dari tabel `tb_kas`
 --
 
 CREATE TABLE `tb_kas` (
@@ -184,7 +283,7 @@ CREATE TABLE `tb_kas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_kas`
+-- Dumping data untuk tabel `tb_kas`
 --
 
 INSERT INTO `tb_kas` (`id_kas`, `jns_transaksi`, `status`, `tgl_transaksi`, `id_akun`, `debet`, `kredit`) VALUES
@@ -462,12 +561,129 @@ INSERT INTO `tb_kas` (`id_kas`, `jns_transaksi`, `status`, `tgl_transaksi`, `id_
 (272, 254, 'TRX-Tabungan', '2019-06-04', 202, 0, 100000),
 (273, 255, 'TRX-Tabungan', '2019-06-05', 201, 3000, 0),
 (274, 256, 'TRX-Tabungan', '2019-06-05', 201, 29000, 0),
-(275, 257, 'TRX-Tabungan', '2019-06-05', 201, 5000, 0);
+(275, 257, 'TRX-Tabungan', '2019-06-05', 201, 5000, 0),
+(276, 5, 'TRX-Simpanan', '2019-06-13', 101, 7000000, 0),
+(277, 258, 'TRX-Tabungan', '2019-06-19', 201, 10000, 0),
+(278, 259, 'TRX-Tabungan', '2019-06-19', 201, 10000, 0),
+(279, 260, 'TRX-Tabungan', '2019-06-19', 201, 1000, 0),
+(280, 261, 'TRX-Tabungan', '2019-06-19', 201, 10000, 0),
+(281, 262, 'TRX-Tabungan', '2019-06-19', 201, 29000, 0),
+(282, 263, 'TRX-Tabungan', '2019-06-19', 201, 29000, 0),
+(283, 264, 'TRX-Tabungan', '2019-06-19', 201, 29000, 0),
+(284, 265, 'TRX-Tabungan', '2019-06-19', 201, 2000, 0),
+(285, 266, 'TRX-Tabungan', '2019-06-19', 201, 2000, 0),
+(286, 267, 'TRX-Tabungan', '2019-06-19', 201, 29000, 0),
+(287, 268, 'TRX-Tabungan', '2019-06-19', 201, 2000, 0),
+(288, 269, 'TRX-Tabungan', '2019-06-19', 201, 1000, 0),
+(289, 270, 'TRX-Tabungan', '2019-06-19', 201, 3000, 0),
+(290, 271, 'TRX-Tabungan', '2019-06-20', 201, 3000, 0),
+(291, 272, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(292, 273, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(293, 274, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(294, 275, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(295, 276, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(296, 277, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(297, 278, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(298, 279, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(299, 280, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(300, 281, 'TRX-Tabungan', '2019-06-20', 201, 2000, 0),
+(301, 282, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(302, 283, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(303, 284, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(304, 285, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(305, 286, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(306, 287, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(307, 288, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(308, 289, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(309, 290, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(310, 291, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(311, 292, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(312, 293, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(313, 294, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(314, 295, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(315, 296, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(316, 297, 'TRX-Tabungan', '2019-06-20', 201, 1000, 0),
+(317, 298, 'TRX-Tabungan', '2019-06-20', 201, 3000, 0),
+(318, 299, 'TRX-Tabungan', '2019-06-20', 201, 10000, 0),
+(319, 300, 'TRX-Tabungan', '2019-06-23', 201, 10000, 0),
+(320, 301, 'TRX-Tabungan', '2019-06-23', 201, 10000, 0),
+(321, 302, 'TRX-Tabungan', '2019-06-23', 201, 3000, 0),
+(322, 303, 'TRX-Tabungan', '2019-06-23', 201, 1000, 0),
+(323, 304, 'TRX-Tabungan', '2019-06-23', 201, 1000, 0),
+(324, 305, 'TRX-Tabungan', '2019-06-23', 201, 30000, 0),
+(325, 306, 'TRX-Tabungan', '2019-06-23', 201, 1000, 0),
+(326, 307, 'TRX-Tabungan', '2019-06-23', 201, 3000, 0),
+(327, 308, 'TRX-Tabungan', '2019-06-24', 201, 3000, 0),
+(328, 309, 'TRX-Tabungan', '2019-06-30', 201, 1000, 0),
+(329, 310, 'TRX-Tabungan', '2019-06-30', 201, 1000, 0),
+(330, 311, 'TRX-Tabungan', '2019-06-30', 201, 1000, 0),
+(331, 312, 'TRX-Tabungan', '2019-06-30', 201, 1000, 0),
+(332, 313, 'TRX-Tabungan', '2019-06-30', 201, 1000, 0),
+(333, 314, 'TRX-Tabungan', '2019-06-30', 201, 1000, 0),
+(334, 315, 'TRX-Tabungan', '2019-06-30', 201, 5000, 0),
+(335, 316, 'TRX-Tabungan', '2019-06-30', 201, 3000, 0),
+(336, 317, 'TRX-Tabungan', '2019-06-30', 201, 10000, 0),
+(337, 318, 'TRX-Tabungan', '2019-06-30', 201, 10000, 0),
+(338, 2, 'TRX-Biaya', '2019-07-18', 501, 0, 555),
+(339, 3, 'TRX-Biaya', '2019-07-18', 501, 0, 10000),
+(340, 319, 'TRX-Tabungan', '2019-07-18', 201, 2000, 0),
+(341, 4, 'TRX-Biaya', '2019-07-18', 501, 0, 10000),
+(342, 5, 'TRX-Biaya', '2019-07-18', 501, 0, 10000),
+(343, 6, 'TRX-Biaya', '2019-07-18', 501, 0, 10000),
+(344, 7, 'TRX-Biaya', '2019-07-18', 501, 0, 1000000),
+(345, 2, 'TRX-Pendapatan', '2019-07-19', 401, 6000, 0),
+(346, 3, 'TRX-Pendapatan', '2019-07-19', 401, 6000, 0),
+(347, 3, 'TRX-Pinjaman', '2019-07-19', 301, 0, 10000000),
+(348, 3, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(349, 4, 'TRX-Pinjaman', '2019-07-19', 301, 0, 10000000),
+(350, 4, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(351, 5, 'TRX-Pinjaman', '2019-07-19', 301, 0, 10000000),
+(352, 5, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(353, 6, 'TRX-Pinjaman', '2019-07-19', 301, 0, 10000000),
+(354, 6, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(355, 7, 'TRX-Pinjaman', '2019-07-19', 301, 0, 10000000),
+(356, 7, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(357, 8, 'TRX-Pinjaman', '2019-07-19', 301, 0, 10000000),
+(358, 8, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(359, 9, 'TRX-Pinjaman', '2019-07-19', 301, 0, 100000000),
+(360, 9, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(361, 10, 'TRX-Pinjaman', '2019-07-19', 301, 0, 20000000),
+(362, 10, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(363, 11, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(364, 11, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(365, 12, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(366, 12, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(367, 13, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(368, 13, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(369, 14, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(370, 14, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(371, 15, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(372, 15, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(373, 16, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(374, 16, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(375, 17, 'TRX-Pinjaman', '2019-07-19', 301, 0, 5000000),
+(376, 17, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(377, 18, 'TRX-Pinjaman', '2019-07-19', 301, 0, 100000000),
+(378, 18, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(379, 19, 'TRX-Pinjaman', '2019-07-19', 301, 0, 100000000),
+(380, 19, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(381, 20, 'TRX-Pinjaman', '2019-07-19', 301, 0, 100000000),
+(382, 20, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(383, 21, 'TRX-Pinjaman', '2019-07-19', 301, 0, 100000000),
+(384, 21, 'TRX-Pinjaman', '2019-07-19', 401, 56000, 0),
+(385, 9, 'TRX-Angsuran', '2019-07-20', 302, 2550000, 0),
+(386, 10, 'TRX-Angsuran', '2019-07-20', 302, 2550000, 0),
+(387, 11, 'TRX-Angsuran', '2019-07-20', 302, 2550000, 0),
+(388, 12, 'TRX-Angsuran', '2019-07-20', 302, 2550000, 0),
+(389, 320, 'TRX-Tabungan', '2019-07-27', 201, 29000, 0),
+(390, 321, 'TRX-Tabungan', '2019-07-27', 201, 1000, 0),
+(391, 322, 'TRX-Tabungan', '2019-08-04', 202, 0, 300000),
+(392, 323, 'TRX-Tabungan', '2019-08-04', 201, 2000, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_kredit`
+-- Struktur dari tabel `tb_kredit`
 --
 
 CREATE TABLE `tb_kredit` (
@@ -490,7 +706,7 @@ CREATE TABLE `tb_kredit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_kredit`
+-- Dumping data untuk tabel `tb_kredit`
 --
 
 INSERT INTO `tb_kredit` (`id_kredit`, `id_nasabah`, `status_rumah`, `nama_perusahaan`, `alamat_perusahaan`, `telp_perusahaan`, `jaminan`, `nama_penanggung`, `pekerjaan_penanggung`, `alamat_penanggung`, `telp_penanggung`, `hubungan`, `nominal_permohonan`, `ket_permohonan`, `tgl_permohonan`, `status_permohonan`) VALUES
@@ -500,19 +716,49 @@ INSERT INTO `tb_kredit` (`id_kredit`, `id_nasabah`, `status_rumah`, `nama_perusa
 (4, 11, 'Milik Sendiri', 'Fakhri Repair', '-', '-', 'Surat Tanah 1 Are', 'Komang Sukra Antara', 'Wiraswasta', 'Jln Padang Lestari Blok H5 Badung', '081456789', 'Ayah', 20000000, 'Membuat usaha perbaikan Handphone', '2018-07-19', 'Tolak'),
 (5, 12, 'Milik Sendiri', 'Warung Linci', '-', '-', 'Surat Tanah 1 hektar', 'Muhammad Yamin', 'PNS', 'Jln Gunung Sangiang No 16 Denpasar', '085792852963', 'Paman', 100000000, 'Membangun usaha warung makan', '2018-07-19', 'Terima'),
 (6, 9, 'Milik Sendiri', 'Olshop Sepatu', '-', '-', 'BPKB Vario 2016', 'Niya', 'Pedagang', 'Jln Tegal Wangi III No 34', '087861225771', 'Ibu', 5000000, 'Modal Usaha Toko Sepatu', '2018-07-19', 'Tolak'),
-(7, 18, 'Milik Sendiri', 'The Urban Make Up', 'Jl Raya Puputan No 232', '0361234789', 'Surat Tanah', 'Ria', 'Pegawai', 'Jl Raya Sesetan No 64', '0812367129090', 'Saudara', 20000000, 'Modal Usaha', '2018-07-19', 'Tunda'),
-(8, 10, 'Milik Sendiri', 'Toko Bunga', 'Jl Raya Renon', '0361222777', 'Emas', 'Dian', 'Guru', 'Jl Raya Sukawati', '08179798579', 'Ibu', 5000000, 'Modal Usaha', '2018-07-19', 'Tunda'),
-(9, 36, 'Milik Sendiri', 'Rumah Makan', 'Jl Raya Uluwatu', '0361234789', 'Surat Tanah', 'Dayu Gita', 'Pegawai', 'Jl Raya Sempidi', '08179798579', 'Kakak', 5000000, 'Sewa Kontrak', '2018-07-19', 'Tunda'),
-(10, 24, 'Milik Sendiri', 'Toko Buku', 'Tabanan', '0361277890', 'Rumah', 'Eddi', 'Pedagang', 'Denpasar Selatan', '087861222780', 'Ayah', 100000000, 'Buat Toko', '2018-07-19', 'Tunda'),
-(11, 20, 'Milik Sendiri', 'Salon & Spa', 'Jl Raya Kuta', '087860330990', 'Rumah', 'Dian', 'Guru', 'Tabanan Kota', '0361998771', 'Ibu', 100000000, 'Modal Usaha', '2018-07-19', 'Tunda'),
-(12, 32, 'Milik Sendiri', 'Toko Aksesoris', 'Denpasar Utara', '0361277890', 'BPKB Mobil Jazz', 'Aprilia', 'PNS', 'Peguyangan', '08179798579', 'Ibu', 100000000, 'Sewa Toko', '2018-07-19', 'Tunda'),
-(13, 27, 'Sewa/Kontrak', 'Butik Kebaya', 'Jl Raya Sesetan No 23', '087860330990', 'Emas 1kg', 'Ayu Rani', 'Pedagang', 'Denpasar', '08179798579', 'Ibu', 100000000, 'Modal Usaha', '2018-07-19', 'Tunda'),
-(14, 13, 'Milik Sendiri', 'Toko Tas', 'Kuta', '0361222777', 'BPKB Vario 2917', 'Winda', 'Wirausaha', 'Kuta Utara', '08179798579', 'Ibu', 5000000, 'Modal Usaha', '2018-07-19', 'Tunda');
+(7, 18, 'Milik Sendiri', 'The Urban Make Up', 'Jl Raya Puputan No 232', '0361234789', 'Surat Tanah', 'Ria', 'Pegawai', 'Jl Raya Sesetan No 64', '0812367129090', 'Saudara', 20000000, 'Modal Usaha', '2018-07-19', 'Terima'),
+(8, 10, 'Milik Sendiri', 'Toko Bunga', 'Jl Raya Renon', '0361222777', 'Emas', 'Dian', 'Guru', 'Jl Raya Sukawati', '08179798579', 'Ibu', 5000000, 'Modal Usaha', '2018-07-19', 'Terima'),
+(9, 36, 'Milik Sendiri', 'Rumah Makan', 'Jl Raya Uluwatu', '0361234789', 'Surat Tanah', 'Dayu Gita', 'Pegawai', 'Jl Raya Sempidi', '08179798579', 'Kakak', 5000000, 'Sewa Kontrak', '2018-07-19', 'Terima'),
+(10, 24, 'Milik Sendiri', 'Toko Buku', 'Tabanan', '0361277890', 'Rumah', 'Eddi', 'Pedagang', 'Denpasar Selatan', '087861222780', 'Ayah', 100000000, 'Buat Toko', '2018-07-19', 'Terima'),
+(11, 20, 'Milik Sendiri', 'Salon & Spa', 'Jl Raya Kuta', '087860330990', 'Rumah', 'Dian', 'Guru', 'Tabanan Kota', '0361998771', 'Ibu', 100000000, 'Modal Usaha', '2018-07-19', 'Terima'),
+(12, 32, 'Milik Sendiri', 'Toko Aksesoris', 'Denpasar Utara', '0361277890', 'BPKB Mobil Jazz', 'Aprilia', 'PNS', 'Peguyangan', '08179798579', 'Ibu', 100000000, 'Sewa Toko', '2018-07-19', 'Terima'),
+(13, 27, 'Sewa/Kontrak', 'Butik Kebaya', 'Jl Raya Sesetan No 23', '087860330990', 'Emas 1kg', 'Ayu Rani', 'Pedagang', 'Denpasar', '08179798579', 'Ibu', 100000000, 'Modal Usaha', '2018-07-19', 'Terima'),
+(14, 13, 'Milik Sendiri', 'Toko Tas', 'Kuta', '0361222777', 'BPKB Vario 2917', 'Winda', 'Wirausaha', 'Kuta Utara', '08179798579', 'Ibu', 5000000, 'Modal Usaha', '2018-07-19', 'Terima'),
+(15, 9, 'Milik Sendiri', 'vgdfdgdfg', 'fgdfdg', '566454', 'ghgfgfh', 'fgdfgdf', 'fgdfdfg', 'ghff', '465456464', 'dfdgdfgd', 4354533, 'xcvxcvx', '2019-07-27', 'Tunda');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_nasabah`
+-- Struktur dari tabel `tb_link_akun`
+--
+
+CREATE TABLE `tb_link_akun` (
+  `id_link_akun` int(11) NOT NULL,
+  `id_jenis_transaksi` int(11) NOT NULL,
+  `id_akun` varchar(255) NOT NULL,
+  `dk` enum('d','k') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `tb_link_akun`
+--
+
+INSERT INTO `tb_link_akun` (`id_link_akun`, `id_jenis_transaksi`, `id_akun`, `dk`) VALUES
+(1, 1, '301', 'd'),
+(2, 1, '100', 'k'),
+(3, 2, '100', 'd'),
+(4, 2, '302', 'k'),
+(5, 3, '100', 'd'),
+(6, 3, '206', 'k'),
+(7, 7, '501', 'd'),
+(8, 7, '100', 'k'),
+(13, 8, '100', 'd'),
+(14, 8, '401', 'k');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tb_nasabah`
 --
 
 CREATE TABLE `tb_nasabah` (
@@ -535,7 +781,7 @@ CREATE TABLE `tb_nasabah` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_nasabah`
+-- Dumping data untuk tabel `tb_nasabah`
 --
 
 INSERT INTO `tb_nasabah` (`id_nasabah`, `no_ktp`, `nama`, `jk`, `pekerjaan`, `tempat_lahir`, `tgl_lahir`, `agama`, `alamat`, `no_hp`, `email`, `foto`, `tgl_daftar`, `status`, `bln_akhir`, `thn_akhir`) VALUES
@@ -553,7 +799,7 @@ INSERT INTO `tb_nasabah` (`id_nasabah`, `no_ktp`, `nama`, `jk`, `pekerjaan`, `te
 (5, '5103022204970004', 'I Nyoman Yoga Nugraha', 'Laki-laki', 'PNS', 'Badung', '1991-04-28', 'Hindu', 'Jl Gede Desa I No 8 Lingkungan Pekandelan', '081805502233', 'yo666an@gmail.com', '5103022204970004.jpg', '2018-07-01', 'Anggota', 7, 2018),
 (4, '5107062709960001', 'Ida Bagus Ketut Adiyoga', 'Laki-laki', 'Wiraswasta', 'Bungaya', '1996-09-27', 'Hindu', 'Jln Nenas No 16 Bungaya Kangin Bali', '085792486889', 'ajusadiyoga@gmail.com', '5107062709960001.jpg', '2018-07-01', 'Anggota', 7, 2018),
 (3, '5107062709960002', 'Cinta Tiara Dewi', 'Perempuan', 'Guru', 'Denpasar', '1997-02-04', 'Islam', 'Jl. Bedahulu No.12 Denpasar', '081222333111', 'cinta@gmail.com', '5107062709960002.jpg', '2018-07-01', 'Anggota', 7, 2018),
-(1, '5104012710970004', 'I Gede Purnayasa', 'Laki-laki', 'PNS', 'Denpasar', '1997-10-28', 'Hindu', 'Jl. Ayani No.11X', '089672844172', 'eddiputra12@gmail.com', '5104012710970004.jpg', '2018-07-01', 'Anggota', 8, 2018),
+(1, '5104012710970004', 'I Gede Purnayasa', 'Laki-laki', 'PNS', 'Denpasar', '1997-10-28', 'Hindu', 'Jl. Ayani No.11X', '089672844172', 'eddiputra12@gmail.com', '5104012710970004.jpg', '2018-07-01', 'Anggota', 8, 2019),
 (2, '5107062709960005', 'Ni Putu Leonita Wijayanti', 'Perempuan', 'Wiraswasta', 'Denpasar', '1997-03-13', 'Hindu', 'Jl. Nangka No.32X Denpasar', '081222333444', 'leonitawijayanti23@gmail.com', '5107062709960005.jpg', '2018-07-01', 'Anggota', 7, 2018),
 (17, '5107051210960568', 'Ida Ayu Nyoman Dammayanti', 'Perempuan', 'PNS', 'Denpasar', '1995-08-25', 'Hindu', 'Jln Ahmad Yani No 122 Kelurahan Peguyangan', '085792532478', 'dammayanti08@gmail.com', '5107051210960568.jpg', '2018-07-01', 'Nasabah', 0, 0),
 (18, '5102030644978741', 'Reza Akbar Hidayat', 'Laki-laki', 'Pegawai Swasta', 'Denpasar', '1986-08-27', 'Hindu', 'Jln Ahmad Yani no 123 Peguyangan Denpasar', '082236563210', 'rezaakbarhidayat@yahoo.com', '5102030644978741.jpg', '2018-07-01', 'Nasabah', 0, 0),
@@ -574,12 +820,13 @@ INSERT INTO `tb_nasabah` (`id_nasabah`, `no_ktp`, `nama`, `jk`, `pekerjaan`, `te
 (33, '5107062709964501', 'Ni Luh Putu Mila Juliawathi', 'Perempuan', 'Guru', 'Denpasar Barat', '1995-08-19', 'Hindu', 'Jln Pura Demak No 12 Pemecutan Klod', '082236563220', 'juliawathimila@gmail.com', '5107062709964501.jpg', '2018-07-01', 'Nasabah', 0, 0),
 (34, '5107062709990045', 'I Komang Ardi Widiantara', 'Laki-laki', 'Guru', 'Denpasar Barat', '1998-08-08', 'Islam', 'Jln Gunung Rinjani Tegal Harum Denpasar Barat', '085794654414', 'widiantaraardi@gmail.com', '5107062709990045.jpg', '2018-07-01', 'Nasabah', 0, 0),
 (35, '5107062709988901', 'Putu Andi Satrya Yuda', 'Laki-laki', 'Mahasiswa', 'Denpasar Utara', '1994-12-16', 'Hindu', 'Jln Mawar No 11 Denpasar, Dangin Puri', '089672847792', 'satryayuda@gmail.com', '5107062709988901.jpg', '2018-07-01', 'Nasabah', 0, 0),
-(36, '5103022204980014', 'I Made Sucipta Yasa', 'Laki-laki', 'Wiraswasta', 'Denpasar', '1991-01-02', 'Kristen Katolik', 'Jln Nenas No 16 Pemecutan Kaje', '085794656414', 'suciptayasa@gmail.com', '5103022204980014.jpg', '2018-07-01', 'Nasabah', 0, 0);
+(36, '5103022204980014', 'I Made Sucipta Yasa', 'Laki-laki', 'Wiraswasta', 'Denpasar', '1991-01-02', 'Kristen Katolik', 'Jln Nenas No 16 Pemecutan Kaje', '085794656414', 'suciptayasa@gmail.com', '5103022204980014.jpg', '2018-07-01', 'Nasabah', 0, 0),
+(37, '5104061005970005', 'ketut bagus', 'Laki-laki', 'Mahasiswa', 'Puakan', '1997-10-06', 'Hindu', 'puakan', '+6285739010882', 'csukarena@gmail.com', '5104061005970005.jpg', '2019-06-19', 'Nasabah', 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_pendapatan`
+-- Struktur dari tabel `tb_pendapatan`
 --
 
 CREATE TABLE `tb_pendapatan` (
@@ -590,7 +837,7 @@ CREATE TABLE `tb_pendapatan` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_pendapatan`
+-- Dumping data untuk tabel `tb_pendapatan`
 --
 
 INSERT INTO `tb_pendapatan` (`id_pendapatan`, `kode_pendapatan`, `id_akun`, `nama`) VALUES
@@ -600,7 +847,7 @@ INSERT INTO `tb_pendapatan` (`id_pendapatan`, `kode_pendapatan`, `id_akun`, `nam
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_reknasabah`
+-- Struktur dari tabel `tb_reknasabah`
 --
 
 CREATE TABLE `tb_reknasabah` (
@@ -614,7 +861,7 @@ CREATE TABLE `tb_reknasabah` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_reknasabah`
+-- Dumping data untuk tabel `tb_reknasabah`
 --
 
 INSERT INTO `tb_reknasabah` (`id_reknasabah`, `no_rek`, `id_nasabah`, `tgl_bukarek`, `saldo_akhir`, `rek_status`, `id_user`) VALUES
@@ -623,33 +870,34 @@ INSERT INTO `tb_reknasabah` (`id_reknasabah`, `no_rek`, `id_nasabah`, `tgl_bukar
 (8, 'AD/2018', 15, '2018-07-01', 250000, 'Baru', 4),
 (7, 'AD/2018', 14, '2018-07-01', 420000, 'Baru', 4),
 (6, 'AD/2018', 13, '2018-07-01', 340000, 'Baru', 4),
-(5, 'AD/2018', 12, '2018-07-01', 330000, 'Baru', 4),
-(4, 'AD/2018', 11, '2018-07-01', 294000, 'Baru', 4),
-(3, 'AD/2018', 10, '2018-07-01', 303000, 'Baru', 4),
-(2, 'AD/2018', 9, '2018-07-01', 200000, 'Baru', 4),
-(1, 'AD/2018', 8, '2018-07-01', -70000, 'Baru', 4),
+(5, 'AD/2018', 12, '2018-07-01', 343000, 'Baru', 4),
+(4, 'AD/2018', 11, '2018-07-01', 349000, 'Baru', 4),
+(3, 'AD/2018', 10, '2018-07-01', 316000, 'Baru', 4),
+(2, 'AD/2018', 9, '2018-07-01', 15000, 'Baru', 4),
+(1, 'AD/2018', 8, '2018-07-01', -64000, 'Baru', 4),
 (13, 'YO/2018', 20, '2018-07-01', 335000, 'Baru', 5),
 (11, 'YO/2018', 18, '2018-07-01', 410000, 'Baru', 5),
 (12, 'YO/2018', 19, '2018-07-01', 400000, 'Baru', 5),
-(14, 'YO/2018', 21, '2018-07-01', 380000, 'Baru', 5),
+(14, 'YO/2018', 21, '2018-07-01', 390000, 'Baru', 5),
 (15, 'YO/2018', 22, '2018-07-01', 290000, 'Baru', 5),
 (16, 'YO/2018', 23, '2018-07-01', 390000, 'Baru', 5),
 (17, 'YO/2018', 24, '2018-07-01', 270000, 'Baru', 5),
 (18, 'YO/2018', 25, '2018-07-01', 240000, 'Baru', 5),
 (19, 'YO/2018', 26, '2018-07-01', 340000, 'Baru', 5),
 (20, 'YO/2018', 27, '2018-07-01', 380000, 'Baru', 5),
-(21, 'MP/2018', 28, '2018-07-01', 190000, 'Baru', 7),
+(21, 'MP/2018', 28, '2018-07-01', 192000, 'Baru', 7),
 (22, 'MP/2018', 29, '2018-07-01', 305000, 'Baru', 7),
 (23, 'MP/2018', 30, '2018-07-01', 435000, 'Baru', 7),
 (24, 'MP/2018', 32, '2018-07-01', 380000, 'Baru', 7),
 (25, 'MP/2018', 34, '2018-07-01', 380000, 'Baru', 7),
-(26, 'MP/2018', 35, '2018-07-01', 340000, 'Baru', 7),
-(27, 'MP/2018', 36, '2018-07-01', 320000, 'Baru', 7);
+(26, 'MP/2018', 35, '2018-07-01', 343000, 'Baru', 7),
+(27, 'MP/2018', 36, '2018-07-01', 324000, 'Baru', 7),
+(28, 'YO/2019', 37, '2019-06-19', 47000, 'Baru', 5);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_angsuran`
+-- Struktur dari tabel `tb_trx_angsuran`
 --
 
 CREATE TABLE `tb_trx_angsuran` (
@@ -662,7 +910,7 @@ CREATE TABLE `tb_trx_angsuran` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_angsuran`
+-- Dumping data untuk tabel `tb_trx_angsuran`
 --
 
 INSERT INTO `tb_trx_angsuran` (`id_trx_angsuran`, `id_trx`, `tgl_transaksi`, `id_akun`, `bulan_ke`, `nominal_angsuran`) VALUES
@@ -673,12 +921,16 @@ INSERT INTO `tb_trx_angsuran` (`id_trx_angsuran`, `id_trx`, `tgl_transaksi`, `id
 (5, 2, '2018-08-13', 302, 1, 8850000),
 (6, 2, '2018-08-13', 302, 2, 8850000),
 (7, 2, '2018-08-13', 302, 3, 8850000),
-(8, 2, '2018-08-13', 302, 4, 8850000);
+(8, 2, '2018-08-13', 302, 4, 8850000),
+(9, 8, '2019-07-20', 302, 1, 2550000),
+(10, 3, '2019-07-20', 302, 1, 2550000),
+(11, 3, '2019-07-20', 302, 1, 2550000),
+(12, 3, '2019-07-20', 302, 1, 2550000);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_biaya`
+-- Struktur dari tabel `tb_trx_biaya`
 --
 
 CREATE TABLE `tb_trx_biaya` (
@@ -690,16 +942,22 @@ CREATE TABLE `tb_trx_biaya` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_biaya`
+-- Dumping data untuk tabel `tb_trx_biaya`
 --
 
 INSERT INTO `tb_trx_biaya` (`id_trx`, `id_biaya`, `nominal`, `keterangan`, `tgl_transaksi`) VALUES
-(1, 1, 5000000, '1bulan', '2019-02-20');
+(1, 1, 5000000, '1bulan', '2019-02-20'),
+(2, 1, 555, 'eretrete', '2019-07-18'),
+(3, 1, 10000, 'beli bensin', '2019-07-18'),
+(4, 2, 10000, 'hahay', '2019-07-18'),
+(5, 2, 10000, 'hahay', '2019-07-18'),
+(6, 2, 10000, 'hahay', '2019-07-18'),
+(7, 1, 1000000, 'testes', '2019-07-18');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_pendapatan`
+-- Struktur dari tabel `tb_trx_pendapatan`
 --
 
 CREATE TABLE `tb_trx_pendapatan` (
@@ -711,16 +969,18 @@ CREATE TABLE `tb_trx_pendapatan` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_pendapatan`
+-- Dumping data untuk tabel `tb_trx_pendapatan`
 --
 
 INSERT INTO `tb_trx_pendapatan` (`id_trx`, `id_pendapatan`, `nominal`, `keterangan`, `tgl_transaksi`) VALUES
-(1, 1, 6000, 'ffff', '2019-02-20');
+(1, 1, 6000, 'ffff', '2019-02-20'),
+(2, 1, 6000, 'iluh nyilih pis', '2019-07-19'),
+(3, 1, 6000, 'iluh nyilih pis', '2019-07-19');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_pinjaman`
+-- Struktur dari tabel `tb_trx_pinjaman`
 --
 
 CREATE TABLE `tb_trx_pinjaman` (
@@ -743,17 +1003,36 @@ CREATE TABLE `tb_trx_pinjaman` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_pinjaman`
+-- Dumping data untuk tabel `tb_trx_pinjaman`
 --
 
 INSERT INTO `tb_trx_pinjaman` (`id_trx`, `id_akun`, `id_kredit`, `tgl_realisasi`, `nominal_pinjaman`, `persenbunga`, `angsurantotal`, `angsuranpokok`, `angsuranbunga`, `biaya_admin`, `biaya_materai`, `jangka_waktu`, `total_pinjaman`, `total_pinjaman_bayar`, `total_bulan`, `status_pinjaman`) VALUES
 (1, 301, 1, '2018-07-19', 4000000, 18, 1180000, 1000000, 180000, 5000, 12000, 4, 4720000, 4720000, 4, 'Lunas'),
-(2, 301, 5, '2018-08-13', 90000000, 18, 8850000, 7500000, 1350000, 5000, 12000, 12, 106200000, 35400000, 4, 'Belum Lunas');
+(2, 301, 5, '2018-08-13', 90000000, 18, 8850000, 7500000, 1350000, 5000, 12000, 12, 106200000, 35400000, 4, 'Belum Lunas'),
+(3, 301, 2, '2019-07-19', 10000000, 2, 2550000, 2500000, 50000, 50000, 6000, 4, 10200000, 2550000, 1, 'Belum Lunas'),
+(4, 301, 2, '2019-07-19', 10000000, 2, 2550000, 2500000, 50000, 50000, 6000, 4, 10200000, 0, 0, 'Belum Lunas'),
+(5, 301, 2, '2019-07-19', 10000000, 2, 2550000, 2500000, 50000, 50000, 6000, 4, 10200000, 0, 0, 'Belum Lunas'),
+(6, 301, 2, '2019-07-19', 10000000, 2, 2550000, 2500000, 50000, 50000, 6000, 4, 10200000, 0, 0, 'Belum Lunas'),
+(7, 301, 2, '2019-07-19', 10000000, 2, 2550000, 2500000, 50000, 50000, 6000, 4, 10200000, 0, 0, 'Belum Lunas'),
+(8, 301, 2, '2019-07-19', 10000000, 2, 2550000, 2500000, 50000, 50000, 6000, 4, 10200000, 2550000, 1, 'Belum Lunas'),
+(9, 301, 13, '2019-07-19', 100000000, 2, 5100000, 5000000, 100000, 50000, 6000, 20, 102000000, 0, 0, 'Belum Lunas'),
+(10, 301, 7, '2019-07-19', 20000000, 2, 1020000, 1000000, 20000, 50000, 6000, 20, 20400000, 0, 0, 'Belum Lunas'),
+(11, 301, 8, '2019-07-19', 5000000, 2, 1020000, 1000000, 20000, 50000, 6000, 5, 5100000, 0, 0, 'Belum Lunas'),
+(12, 301, 8, '2019-07-19', 5000000, 2, 1020000, 1000000, 20000, 50000, 6000, 5, 5100000, 0, 0, 'Belum Lunas'),
+(13, 301, 8, '2019-07-19', 5000000, 2, 1020000, 1000000, 20000, 50000, 6000, 5, 5100000, 0, 0, 'Belum Lunas'),
+(14, 301, 14, '2019-07-19', 5000000, 2, 510000, 500000, 10000, 50000, 6000, 10, 5100000, 0, 0, 'Belum Lunas'),
+(15, 301, 14, '2019-07-19', 5000000, 2, 510000, 500000, 10000, 50000, 6000, 10, 5100000, 0, 0, 'Belum Lunas'),
+(16, 301, 14, '2019-07-19', 5000000, 2, 510000, 500000, 10000, 50000, 6000, 10, 5100000, 0, 0, 'Belum Lunas'),
+(17, 301, 9, '2019-07-19', 5000000, 2, 1020000, 1000000, 20000, 50000, 6000, 5, 5100000, 0, 0, 'Belum Lunas'),
+(18, 301, 12, '2019-07-19', 100000000, 2, 5100000, 5000000, 100000, 50000, 6000, 20, 102000000, 0, 0, 'Belum Lunas'),
+(19, 301, 12, '2019-07-19', 100000000, 2, 5100000, 5000000, 100000, 50000, 6000, 20, 102000000, 0, 0, 'Belum Lunas'),
+(20, 301, 12, '2019-07-19', 100000000, 2, 5100000, 5000000, 100000, 50000, 6000, 20, 102000000, 0, 0, 'Belum Lunas'),
+(21, 301, 10, '2019-07-19', 100000000, 2, 5100000, 5000000, 100000, 50000, 6000, 20, 102000000, 0, 0, 'Belum Lunas');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_simpanan`
+-- Struktur dari tabel `tb_trx_simpanan`
 --
 
 CREATE TABLE `tb_trx_simpanan` (
@@ -767,19 +1046,20 @@ CREATE TABLE `tb_trx_simpanan` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_simpanan`
+-- Dumping data untuk tabel `tb_trx_simpanan`
 --
 
 INSERT INTO `tb_trx_simpanan` (`id_trx`, `id_nasabah`, `id_simpanan`, `jumlah_bln`, `bln_mulai`, `total`, `tgl_transaksi`) VALUES
 (1, 1, 2, 1, 7, 10000, '2019-02-20'),
 (2, 1, 1, 1, 8, 1000000, '2019-02-20'),
 (3, 2, 1, 1, 7, 1000000, '2019-02-20'),
-(4, 1, 1, 3, 8, 3000000, '2019-02-20');
+(4, 1, 1, 3, 8, 3000000, '2019-02-20'),
+(5, 1, 1, 7, 8, 7000000, '2019-06-13');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_simpanan_det`
+-- Struktur dari tabel `tb_trx_simpanan_det`
 --
 
 CREATE TABLE `tb_trx_simpanan_det` (
@@ -791,7 +1071,7 @@ CREATE TABLE `tb_trx_simpanan_det` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_simpanan_det`
+-- Dumping data untuk tabel `tb_trx_simpanan_det`
 --
 
 INSERT INTO `tb_trx_simpanan_det` (`id_trx_simpanan_det`, `id_trx`, `nominal`, `bulan`, `tahun`) VALUES
@@ -800,12 +1080,19 @@ INSERT INTO `tb_trx_simpanan_det` (`id_trx_simpanan_det`, `id_trx`, `nominal`, `
 (3, 3, 1000000, 7, 2018),
 (4, 4, 1000000, 8, 2018),
 (5, 4, 1000000, 9, 2018),
-(6, 4, 1000000, 10, 2018);
+(6, 4, 1000000, 10, 2018),
+(7, 5, 1000000, 8, 2018),
+(8, 5, 1000000, 9, 2018),
+(9, 5, 1000000, 10, 2018),
+(10, 5, 1000000, 11, 2018),
+(11, 5, 1000000, 12, 2018),
+(12, 5, 1000000, 1, 2019),
+(13, 5, 1000000, 2, 2019);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_trx_tabungan`
+-- Struktur dari tabel `tb_trx_tabungan`
 --
 
 CREATE TABLE `tb_trx_tabungan` (
@@ -820,7 +1107,7 @@ CREATE TABLE `tb_trx_tabungan` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_trx_tabungan`
+-- Dumping data untuk tabel `tb_trx_tabungan`
 --
 
 INSERT INTO `tb_trx_tabungan` (`id_trx`, `id_reknasabah`, `tgl_transaksi`, `id_akun`, `debet`, `kredit`, `saldo`, `id_user`) VALUES
@@ -1080,12 +1367,101 @@ INSERT INTO `tb_trx_tabungan` (`id_trx`, `id_reknasabah`, `tgl_transaksi`, `id_a
 (254, 3, '2019-06-04', 202, 100000, 0, 300000, 13),
 (255, 3, '2019-06-05', 201, 0, 3000, 303000, 13),
 (256, 4, '2019-06-05', 201, 0, 29000, 289000, 13),
-(257, 4, '2019-06-05', 201, 0, 5000, 294000, 13);
+(257, 4, '2019-06-05', 201, 0, 5000, 294000, 13),
+(258, 2, '2019-06-19', 201, 0, 10000, 210000, 13),
+(259, 2, '2019-06-19', 201, 0, 10000, 220000, 13),
+(260, 2, '2019-06-19', 201, 0, 1000, 221000, 13),
+(261, 2, '2019-06-19', 201, 0, 10000, 231000, 13),
+(262, 2, '2019-06-19', 201, 0, 29000, 260000, 13),
+(263, 2, '2019-06-19', 201, 0, 29000, 260000, 13),
+(264, 2, '2019-06-19', 201, 0, 29000, 260000, 13),
+(265, 2, '2019-06-19', 201, 0, 2000, 262000, 13),
+(266, 2, '2019-06-19', 201, 0, 2000, 264000, 13),
+(267, 2, '2019-06-19', 201, 0, 29000, 293000, 13),
+(268, 2, '2019-06-19', 201, 0, 2000, 295000, 13),
+(269, 5, '2019-06-19', 201, 0, 1000, 331000, 13),
+(270, 2, '2019-06-19', 201, 0, 3000, 298000, 13),
+(271, 2, '2019-06-20', 201, 0, 3000, 301000, 13),
+(272, 5, '2019-06-20', 201, 0, 1000, 332000, 13),
+(273, 2, '2019-06-20', 201, 0, 2000, 303000, 13),
+(274, 2, '2019-06-20', 201, 0, 1000, 304000, 13),
+(275, 3, '2019-06-20', 201, 0, 2000, 305000, 13),
+(276, 4, '2019-06-20', 201, 0, 2000, 296000, 13),
+(277, 2, '2019-06-20', 201, 0, 2000, 306000, 13),
+(278, 3, '2019-06-20', 201, 0, 2000, 307000, 13),
+(279, 3, '2019-06-20', 201, 0, 2000, 309000, 13),
+(280, 2, '2019-06-20', 201, 0, 2000, 308000, 13),
+(281, 3, '2019-06-20', 201, 0, 2000, 311000, 13),
+(282, 1, '2019-06-20', 201, 0, 1000, -69000, 13),
+(283, 2, '2019-06-20', 201, 0, 1000, 309000, 13),
+(284, 2, '2019-06-20', 201, 0, 1000, 310000, 13),
+(285, 3, '2019-06-20', 201, 0, 1000, 312000, 13),
+(286, 3, '2019-06-20', 201, 0, 1000, 313000, 13),
+(287, 3, '2019-06-20', 201, 0, 1000, 313000, 13),
+(288, 2, '2019-06-20', 201, 0, 1000, 311000, 13),
+(289, 2, '2019-06-20', 201, 0, 1000, 311000, 13),
+(290, 2, '2019-06-20', 201, 0, 1000, 311000, 13),
+(291, 2, '2019-06-20', 201, 0, 1000, 311000, 13),
+(292, 2, '2019-06-20', 201, 0, 1000, 311000, 13),
+(293, 2, '2019-06-20', 201, 0, 1000, 311000, 13),
+(294, 2, '2019-06-20', 201, 0, 1000, 312000, 13),
+(295, 5, '2019-06-20', 201, 0, 1000, 333000, 13),
+(296, 4, '2019-06-20', 201, 0, 1000, 297000, 13),
+(297, 21, '2019-06-20', 201, 0, 1000, 191000, 13),
+(298, 4, '2019-06-20', 201, 0, 3000, 300000, 13),
+(299, 4, '2019-06-20', 201, 0, 10000, 310000, 13),
+(300, 5, '2019-06-23', 201, 0, 10000, 343000, 13),
+(301, 14, '2019-06-23', 201, 0, 10000, 390000, 13),
+(302, 26, '2019-06-23', 201, 0, 3000, 343000, 13),
+(303, 28, '2019-06-23', 201, 0, 1000, 1000, 13),
+(304, 28, '2019-06-23', 201, 0, 1000, 2000, 13),
+(305, 28, '2019-06-23', 201, 0, 30000, 32000, 13),
+(306, 21, '2019-06-23', 201, 0, 1000, 192000, 13),
+(307, 28, '2019-06-23', 201, 0, 3000, 35000, 13),
+(308, 27, '2019-06-24', 201, 0, 3000, 323000, 13),
+(309, 27, '2019-06-30', 201, 0, 1000, 324000, 13),
+(310, 27, '2019-06-30', 201, 0, 1000, 324000, 13),
+(311, 27, '2019-06-30', 201, 0, 1000, 324000, 13),
+(312, 27, '2019-06-30', 201, 0, 1000, 324000, 13),
+(313, 27, '2019-06-30', 201, 0, 1000, 324000, 13),
+(314, 27, '2019-06-30', 201, 0, 1000, 324000, 13),
+(315, 1, '2019-06-30', 201, 0, 5000, -64000, 13),
+(316, 3, '2019-06-30', 201, 0, 3000, 316000, 13),
+(317, 28, '2019-06-30', 201, 0, 10000, 45000, 13),
+(318, 4, '2019-06-30', 201, 0, 10000, 320000, 13),
+(319, 28, '2019-07-18', 201, 0, 2000, 47000, 13),
+(320, 4, '2019-07-27', 201, 0, 29000, 349000, 13),
+(321, 2, '2019-07-27', 201, 0, 1000, 313000, 13),
+(322, 2, '2019-08-04', 202, 300000, 0, 13000, 13),
+(323, 2, '2019-08-04', 201, 0, 2000, 15000, 13);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_user`
+-- Struktur dari tabel `tb_tutup_buku`
+--
+
+CREATE TABLE `tb_tutup_buku` (
+  `id_tutup_buku` int(11) NOT NULL,
+  `tgl_awal` date NOT NULL,
+  `tgl_akhir` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `tb_tutup_buku`
+--
+
+INSERT INTO `tb_tutup_buku` (`id_tutup_buku`, `tgl_awal`, `tgl_akhir`) VALUES
+(1, '2019-06-20', '2019-06-24'),
+(2, '2019-06-30', '2019-07-20'),
+(3, '2019-07-27', '2019-07-27'),
+(4, '2019-07-27', '2019-07-27'),
+(5, '2019-08-04', '2019-08-04');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tb_user`
 --
 
 CREATE TABLE `tb_user` (
@@ -1100,7 +1476,7 @@ CREATE TABLE `tb_user` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `tb_user`
+-- Dumping data untuk tabel `tb_user`
 --
 
 INSERT INTO `tb_user` (`id_user`, `id_nasabah`, `username`, `password`, `level`, `kode_user`, `st`, `kd_reset`) VALUES
@@ -1142,11 +1518,18 @@ INSERT INTO `tb_user` (`id_user`, `id_nasabah`, `username`, `password`, `level`,
 (36, 36, '5103022204980014', '827ccb0eea8a706c4c34a16891f84e7b', 'Nasabah', '-', 'Aktif', ''),
 (878, 8789, 'ketut', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'Ketua', '435', 'Aktif', '656'),
 (8789898, 8789, 'ketut', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'Ketua', '435', 'Aktif', '656'),
-(76238472, 61312314, 'ketut', '12345678', 'Ketua', '8', 'Aktif', '713981');
+(76238472, 61312314, 'ketut', '12345678', 'Ketua', '8', 'Aktif', '713981'),
+(76238473, 37, '5104061005970005', '827ccb0eea8a706c4c34a16891f84e7b', 'Nasabah', '-', 'Aktif', '');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `jenis_transaksi`
+--
+ALTER TABLE `jenis_transaksi`
+  ADD PRIMARY KEY (`id_jenis_transasksi`);
 
 --
 -- Indexes for table `tb_akun`
@@ -1182,7 +1565,18 @@ ALTER TABLE `tb_jns_simpanan`
 -- Indexes for table `tb_jurnal`
 --
 ALTER TABLE `tb_jurnal`
-  ADD PRIMARY KEY (`id_transaksi`);
+  ADD PRIMARY KEY (`id_jurnal`),
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `id_tutup_buku` (`id_tutup_buku`),
+  ADD KEY `id_tutup_buku_2` (`id_tutup_buku`);
+
+--
+-- Indexes for table `tb_jurnal_detail`
+--
+ALTER TABLE `tb_jurnal_detail`
+  ADD PRIMARY KEY (`id_jurnal_detail`),
+  ADD KEY `id_jurnal` (`id_jurnal`),
+  ADD KEY `id_akun` (`id_akun`);
 
 --
 -- Indexes for table `tb_kas`
@@ -1195,6 +1589,12 @@ ALTER TABLE `tb_kas`
 --
 ALTER TABLE `tb_kredit`
   ADD PRIMARY KEY (`id_kredit`);
+
+--
+-- Indexes for table `tb_link_akun`
+--
+ALTER TABLE `tb_link_akun`
+  ADD PRIMARY KEY (`id_link_akun`);
 
 --
 -- Indexes for table `tb_nasabah`
@@ -1257,6 +1657,12 @@ ALTER TABLE `tb_trx_tabungan`
   ADD PRIMARY KEY (`id_trx`);
 
 --
+-- Indexes for table `tb_tutup_buku`
+--
+ALTER TABLE `tb_tutup_buku`
+  ADD PRIMARY KEY (`id_tutup_buku`);
+
+--
 -- Indexes for table `tb_user`
 --
 ALTER TABLE `tb_user`
@@ -1265,6 +1671,12 @@ ALTER TABLE `tb_user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `jenis_transaksi`
+--
+ALTER TABLE `jenis_transaksi`
+  MODIFY `id_jenis_transasksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tb_bungatabungan`
@@ -1276,67 +1688,79 @@ ALTER TABLE `tb_bungatabungan`
 -- AUTO_INCREMENT for table `tb_jns_simpanan`
 --
 ALTER TABLE `tb_jns_simpanan`
-  MODIFY `id_simpanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_simpanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `tb_jurnal_detail`
+--
+ALTER TABLE `tb_jurnal_detail`
+  MODIFY `id_jurnal_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `tb_kas`
 --
 ALTER TABLE `tb_kas`
-  MODIFY `id_kas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=276;
+  MODIFY `id_kas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=393;
 
 --
 -- AUTO_INCREMENT for table `tb_kredit`
 --
 ALTER TABLE `tb_kredit`
-  MODIFY `id_kredit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_kredit` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `tb_link_akun`
+--
+ALTER TABLE `tb_link_akun`
+  MODIFY `id_link_akun` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_angsuran`
 --
 ALTER TABLE `tb_trx_angsuran`
-  MODIFY `id_trx_angsuran` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_trx_angsuran` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_biaya`
 --
 ALTER TABLE `tb_trx_biaya`
-  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_pendapatan`
 --
 ALTER TABLE `tb_trx_pendapatan`
-  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_pinjaman`
 --
 ALTER TABLE `tb_trx_pinjaman`
-  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_simpanan`
 --
 ALTER TABLE `tb_trx_simpanan`
-  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_simpanan_det`
 --
 ALTER TABLE `tb_trx_simpanan_det`
-  MODIFY `id_trx_simpanan_det` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_trx_simpanan_det` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `tb_trx_tabungan`
 --
 ALTER TABLE `tb_trx_tabungan`
-  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
+  MODIFY `id_trx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=324;
 
 --
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76238473;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76238474;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
